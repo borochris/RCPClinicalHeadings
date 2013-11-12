@@ -1,0 +1,345 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!--
+	RCP Vista Demonstrator
+	Author: Chris Casey
+	Copyright 2013 CPC Computer Solutions Ltd.
+ 
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+ 
+       http://www.apache.org/licenses/LICENSE-2.0
+ 
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-touch-fullscreen" content="yes" />
+    <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+    <link href="/bootstrap-3.0.0/dist/css/bootstrap.css" rel="stylesheet" />
+	<link href="/toastr/toastr.css" rel="stylesheet" />
+	<link href="/select2/select2.css" rel="stylesheet" />
+	<link href="/dataTables/jquery.dataTables.css" rel="stylesheet" />
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="/bootstrap-3.0.0/assets/js/html5shiv.js"></script>
+      <script src="/bootstrap-3.0.0/assets/js/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Fav and touch icons -->
+    <link rel="shortcut icon" href="/bootstrap-3.0.0/assets/ico/favicon.png" />
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/bootstrap-3.0.0/assets/ico/apple-touch-icon-144-precomposed.png" />
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/bootstrap-3.0.0/assets/ico/apple-touch-icon-114-precomposed.png" />
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/bootstrap-3.0.0/assets/ico/apple-touch-icon-72-precomposed.png" />
+    <link rel="apple-touch-icon-precomposed" href="/bootstrap-3.0.0/assets/ico/apple-touch-icon-57-precomposed.png" />
+
+    <script src="/socket.io/socket.io.js"></script>
+    <!--[if (IE 6)|(IE 7)|(IE 8)]><script type="text/javascript" src="http://ajax.cdnjs.com/ajax/libs/json2/20110223/json2.js"></script><![endif]-->
+
+    <title>Vista RCP Demonstrator</title>
+
+    <style type="text/css">
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+      }
+      .sidebar-nav {
+        padding: 9px 0;
+      }
+
+      .infoPanel {
+        background-color: #eeeeee;
+        margin-bottom: 10px;
+        padding: 1px 8px 5px 8px;
+      }
+
+      .infoHeader {
+        background-color: #dddddd;        
+      }
+
+      .nav > li.disabled.nav-header > a {
+        cursor: default;
+        font-size: 12px;
+        font-weight: bold;
+        text-transform: uppercase;
+      }
+
+      .focusedInput {
+        border-color: rgba(82,168,236,.8);
+        outline: 0;
+        outline: thin dotted \9;
+        -moz-box-shadow: 0 0 8px rgba(82,168,236,.6);
+        box-shadow: 0 0 8px rgba(82,168,236,.6) !important;
+      }
+
+    </style>
+
+
+  </head>
+
+  <body>
+
+    <!-- Modal Login Form -->
+    <div id="loginPanel" class="modal fade">
+      <div class="modal-dialog">
+        <div id="loginModalPanel" class="modal-content">
+          <div class="modal-header">
+            <h3 id="loginPanel-title"></h3>
+          </div>
+          <div id="loginPanelBody" class="modal-body">
+            <form id="loginForm" role="form">
+              <legend>Please log in</legend>
+              <div class="form-group">
+                <label for="username">Access Code: </label>
+                <input type="text" class="form-control focusedInput" id="username" placeholder="Enter your Access Code" />
+              </div>
+              <div class="form-group">
+                <label for="password">Verify Code: </label>
+                <input type="password" class="form-control" id="password" placeholder="Enter your Verify Code" />
+              </div>
+            </form>
+            <div class="text-center text-danger" id="loginAlertText"></div>
+          </div>
+          <div class="modal-footer">
+            <a href="#" id="loginBtn" style="display: none" class="btn btn-primary">Login</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+     <!-- Main Page Definition -->
+
+    <!-- NavBar header -->
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="container">
+          <div class="navbar-header">
+            <div class="navbar-brand visible-xs" id="ewd-navbar-title-phone">Vista RCP</div>
+            <div class="navbar-brand hidden-xs" id="ewd-navbar-title-other">Vists RCP demonstrator</div>
+            <button class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+          </div>
+          <div class="navbar-collapse collapse navbar-ex1-collapse">
+            <p class="navbar-text navbar-right">
+              Logged in as <span id="loggedInAs"></span>
+            </p>
+		    <form class="navbar-form navbar-right">
+              <button id="newPatient" class="btn btn-default" >Select Patient</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </nav>
+    <!-- Patient Selection Modal Panel -->   
+    <div id="patientSelectionForm" class="modal fade">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 id="makeAppFormTitle">Select Patient</h3>
+          </div>
+          <div class="modal-body" id="patientSelectionFormBody">
+            <form role="form" class="form-horizontal" id="selectPatient">
+              <div class="form-group">
+                <label for="selectedPatient">Patient Name</label>
+                 <input type="hidden" id="selectedPatient" style="width:300px"/>
+              </div>
+              <div class="form-group">
+                <button href="#" id="patientBtn" class="btn btn-primary">Get Details</button>
+              </div>
+            </form>
+            <div class="text-center text-error" id="patientSelectionAlertText"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+	
+	
+    <!-- Main body -->
+    <div class="container-fluid">
+	  <div class="col-sm-2" id="menuHolder">
+		<div  id="outerMenu">
+            <ul class="nav nav-pills nav-stacked">
+              <li id="oMenuTotalbyDept" class="active"><a href="#">Patients By Dept.</a></li>
+              <li id="oMenuTotalbyAge"><a href="#">Patients by Age</a></li>
+            </ul>
+        </div>
+		<div  id="patientMenu" style="display: none">
+            <ul class="nav nav-pills nav-stacked">
+			  <li id="pMenuSummary" class="active"><a href="#">Summary and Demographics</a></li>
+              <li id="pMenuContact"><a href="#">Contacts</a></li>
+              <li id="TotalAll"><a href="#">Complaints</a></li>
+              <li id="TotalEd"><a href="#">Family History</a></li>
+			  <li id="pMenuDiagnosis"><a href="#">Diagnoses</a></li>
+              <li id="pMenuProcedures"><a href="#">Procedures</a></li>
+              <li id="pMenuInvestigations"><a href="#">Investigations and Results</a></li>
+              <li id="pMenuMedications"><a href="#">Medications</a></li>
+              <li id="pMenuAllergies"><a href="#">Allergies</a></li>
+              <li id="TotalEd"><a href="#">Alerts</a></li>
+            </ul>
+        </div>
+	  </div>
+        <div id="summaryPage" class="collapse in col-sm-10">
+		<!-- graph view -->
+			<div class="container" id="graphHolder" style="height: 600px;"></div>
+		<!-- list view -->
+			<div class="container" id="listHolder" style="display: none">
+				<div class="panel-body" id="patientListPnl" style="display: none">
+						<div class="panel panel-info">
+							<div class="panel-heading">Patients</div>
+								<div class="table-responsive">
+									<table class="table display" id='patientListTable'>
+									</table>
+								</div>
+						</div>					
+					</div>
+			</div>
+		<!-- person view -->
+			<div class="container" id="PersonHolder" style="display: none">
+				<div class="panel panel-primary">
+					<div class="panel-heading" id="personHeader" ></div>
+					<div class="panel-body" id="demographicsPnl">
+						<div class="panel panel-info">
+							<div class="panel-heading">Demographics</div>
+								<div class="panel col-sm-6" >
+								  <div class="table-responsive">
+									<table class="table">
+										<tr><td class="active">Date of Birth</td><td id="demTDob"></td></tr> 
+										<tr><td class="active">Age</td><td id="demTAge"></td></tr>
+										<tr><td class="active">Sex</td><td id="demTSex"></td></tr>
+										<tr><td class="active">Ethnicity</td><td id="demTEth"></td></tr>
+										<tr><td class="active">NHS Number</td><td id="demTNHSNo"></td></tr>
+										<tr><td class="active">Other Identifier</td><td id="demTOth"></td></tr>
+										<tr><td class="active">Location</td><td id="demTLoc"></td></tr>
+										<tr><td class="active">Participation in Research</td><td id="demTParRec"></td></tr>
+									</table>
+								  </div>
+								</div>
+								<div class="panel col-sm-3" >
+									<address id="demTAdd">
+									</address>
+								</div>
+								<div class="panel col-sm-3" >
+									<address id="demTAdd2">
+									</address>
+								</div>
+						</div>
+						<table class="table table-striped">
+							<tr><td class="active">Last Contact</td><td id="demTLastC"></td></tr>
+							<tr><td class="active">Contacts</td><td id="demTLContact"></td></tr>
+							<tr><td class="active">Vitals</td><td id="demTVitals"></td></tr>
+							<tr><td class="active">Problems</td><td id="demTProblems"></td></tr>
+							<tr><td class="active">Procedures</td><td id="demTProcedures"></td></tr>
+							<tr><td class="active">Orders</td><td id="demTOrders"></td></tr>
+							<tr><td class="active">Diagnoses</td><td id="demTDiagnoses"></td></tr>
+							<tr><td class="active">Allergies</td><td id="demTAllergies"></td></tr>
+						</table>
+					</div>
+					<div class="panel-body" id="contactsPnl" style="display: none">
+						<div class="panel panel-info">
+							<div class="panel-heading">Contacts</div>
+								<div class="table-responsive">
+									<table class="table">
+										<tr><th>Date</th><th>Time</th><th>Contact Type</th><th>Method</th><th>Provider</th></tr>
+										<!-- Temporary canned data below will be replaced by Vista Data -->
+										<tr><td>5/11/2013</td><td>11:00</td><td>Scheduled</td><td>Outpatient Consultation</td><td>Dr. Chris</td></tr>
+									</table>
+								</div>
+						</div>					
+					</div>
+					<div class="panel-body" id="diagnosisPnl" style="display: none">
+						<div class="panel panel-info">
+							<div class="panel-heading">Diagnoses</div>
+								<div class="table-responsive">
+									<table class="table">
+										<tr><th>Date</th><th>Date First Presented</th><th>Episode</th><th>Diagnosis Code</th><th>Diagnosis Description</th><th>Differential Diagnosis</th><th>Provider</th></tr>
+										<!-- Temporary canned data below will be replaced by Vista Data -->
+										<tr><td>5/11/2013</td><td>20/6/2013</td><td>Ongoing</td><td>ICD9-650245</td><td>Something medical</td><td></td><td>Dr. Chris</td></tr>
+									</table>
+								</div>
+						</div>					
+					</div>
+					<div class="panel-body" id="proceduresPnl" style="display: none">
+						<div class="panel panel-info">
+							<div class="panel-heading">Procedures</div>
+								<div class="table-responsive">
+									<table class="table">
+										<tr><th>Date</th><th>Procedure Code</th><th>Procedure Description</th><th>Complications</th><th>Issues</th><th>Provider</th></tr>
+										<!-- Temporary canned data below will be replaced by Vista Data -->
+										<tr><td>5/11/2013</td><td>ICD9-650245</td><td>a very long medical description</td><td></td><td></td><td>Dr. Chris</td></tr>
+									</table>
+								</div>
+						</div>					
+					</div>
+					<div class="panel-body" id="investigationsPnl" style="display: none">
+						<div class="panel panel-info">
+							<div class="panel-heading">Investigations</div>
+								<div class="table-responsive">
+									<table class="table">
+										<tr><th>Date requested</th><th>Investigation Code</th><th>Investigation Description</th><th>Date/time of investigation/result</th><th>Unit</th><th>Value</th><th>Provider</th></tr>
+										<!-- Temporary canned data below will be replaced by Vista Data -->
+										<tr><td>5/11/2013</td><td>ICD9-650245</td><td>Blood pressure reading</td><td>5/11/2013 13:40</td><td>hmg</td><td>120/80</td><td>Dr. Chris</td></tr>
+									</table>
+								</div>
+						</div>					
+					</div>
+					<div class="panel-body" id="medicationsPnl" style="display: none">
+						<div class="panel panel-info">
+							<div class="panel-heading">Medications</div>
+								<div class="table-responsive">
+									<table class="table">
+										<tr><th>Date</th><th>Medication</th><th>Form</th><th>Route</th><th>Dose</th><th>Frequency</th><th>Instructions</th><th>Discontinue warning</th><th>Duration</th><th>Provider</th></tr>
+										<!-- Temporary canned data below will be replaced by Vista Data -->
+										<tr><td>5/11/2013</td><td>Aspirin</td><td>Tablet</td><td>Oral</td><td>500mg</td><td>Daily</td><td></td><td></td><td>ongoing</td><td>Dr. Chris</td></tr>
+									</table>
+								</div>
+						</div>					
+					</div>
+					<div class="panel-body" id="allergiesPnl" style="display: none">
+						<div class="panel panel-info">
+							<div class="panel-heading">Allergies</div>
+								<div class="table-responsive">
+									<table class="table">
+										<tr><th>Date</th><th>Causative Agent</th><th>Description</th><th>Probability of recurrence</th><th>Provider</th></tr>
+										<!-- Temporary canned data below will be replaced by Vista Data -->
+										<tr><td>5/11/2013</td><td>Aspirin</td><td>Severe headaches</td><td></td><td>Dr. Chris</td></tr>
+									</table>
+								</div>
+						</div>					
+					</div>
+				</div>
+			</div>
+        </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript  -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="/bootstrap-3.0.0/assets/js/jquery.js"></script>
+    <script src="/bootstrap-3.0.0/dist/js/bootstrap.js"></script>
+
+    <script src="/ewdLite/EWD.js"></script>
+    <script type="text/javascript" src="/ewd/VistaRCP/app.js"></script>
+	<script type="text/javascript" src="/toastr/toastr.js"></script>
+	<script type="text/javascript" src="/select2/select2.js"></script>
+	<script type="text/javascript" src="/flot/jquery.flot.js"></script>
+	<script type="text/javascript" src="/flot/jquery.flot.time.js"></script>
+	<script type="text/javascript" src="/flot/jumflot-min.js"></script>
+	<script type="text/javascript" src="/flot/jquery.flot.resize.js"></script>
+	<script type="text/javascript" src="/flot/jquery.flot.selection.js"></script>
+	<script type="text/javascript" src="/flot/jquery.flot.categories.js"></script>
+	<script type="text/javascript" src="/dataTables/jquery.dataTables.js"></script>
+
+    <!--  =======================================  -->
+  </body>
+</html>
