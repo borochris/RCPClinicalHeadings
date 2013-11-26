@@ -1,7 +1,9 @@
 RCP Clinical Headings
 
 RCP Clinical Headings is an Open Source demonstrator of the RCP Clinical Headings on top of a Vista EHR
-This is currently very much work in progress and will be updated as the work progresses
+This is currently very much work in progress and will be updated as the work progresses.
+
+Version 0.1
 
 Licence
 

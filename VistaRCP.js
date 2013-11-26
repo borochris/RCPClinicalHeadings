@@ -59,7 +59,22 @@ module.exports = {
       }
       else {
         ewd.session.$('patientId')._value = params.patientId;
-        return {patientName: ewd.session.$('names').$(params.patientId)._value,patientId:params.patientId};
+		ewd.sendWebSocketMsg({
+          type: 'getPatientSummary',
+          message: {}
+        });
+
+		nodeVista.getDemographics(params.patientId,ewd);
+		nodeVista.listVisits(params.patientId,ewd);
+		nodeVista.listVitals(params.patientId,ewd);
+		nodeVista.listProcedures(params.patientId,ewd);
+		nodeVista.listMedications(params.patientId,ewd);
+		nodeVista.listProblems(params.patientId,ewd);
+		nodeVista.listOrders(params.patientId,ewd);
+		nodeVista.listAlerts(params.patientId,ewd);
+		nodeVista.listAllergies(params.patientId,ewd);
+		//if (params.search) var patientName=ewd.session.$('names').$(params.patientId)._value;
+        return ;
       }
     }
 	if (type === 'getPatientsByWard') {
@@ -68,8 +83,6 @@ module.exports = {
     if (type === 'getDemographics') {
       return nodeVista.getDemographics(params.patientId,ewd);
     }
-
-    
   }
 };
 

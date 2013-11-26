@@ -80,7 +80,11 @@
         -moz-box-shadow: 0 0 8px rgba(82,168,236,.6);
         box-shadow: 0 0 8px rgba(82,168,236,.6) !important;
       }
-
+		/* cpc fix overflow in detail table */
+	  .table-condensed {
+		table-layout: fixed;
+		word-wrap: break-word;
+	  }
     </style>
 
 
@@ -123,8 +127,8 @@
       <div class="container">
         <div class="container">
           <div class="navbar-header">
-            <div class="navbar-brand visible-xs" id="ewd-navbar-title-phone">Vista RCP</div>
-            <div class="navbar-brand hidden-xs" id="ewd-navbar-title-other">Vists RCP demonstrator</div>
+            <div class="navbar-brand visible-xs" id="ewd-navbar-title-phone">VistA RCP</div>
+            <div class="navbar-brand hidden-xs" id="ewd-navbar-title-other">VistA RCP demonstrator</div>
             <button class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
@@ -176,45 +180,64 @@
             </ul>
         </div>
 		<div  id="patientMenu" style="display: none">
-            <ul class="nav nav-pills nav-stacked">
-			  <li id="pMenuSummary" class="active"><a href="#">Summary and Demographics</a></li>
-              <li id="pMenuContact"><a href="#">Contacts</a></li>
-              <li id="TotalAll"><a href="#">Complaints</a></li>
-              <li id="TotalEd"><a href="#">Family History</a></li>
-			  <li id="pMenuDiagnosis"><a href="#">Diagnoses</a></li>
-              <li id="pMenuProcedures"><a href="#">Procedures</a></li>
-              <li id="pMenuInvestigations"><a href="#">Investigations and Results</a></li>
-              <li id="pMenuMedications"><a href="#">Medications</a></li>
-              <li id="pMenuAllergies"><a href="#">Allergies</a></li>
-              <li id="TotalEd"><a href="#">Alerts</a></li>
+            <ul class="nav bs-sidenav nav-pills nav-stacked">
+			<li class="divider"></li>
+			<li class="divider">___________________________________</li>
+			  <li id="pMenuSummary" class="active"><a href="#">Patient Demographics</a></li>
+              <li id="pMenuContact"><a href="#">Reasons for Contact<span class="badge pull-right" id="pMenuContactsBadge"></span></a></li>
+              <li id="pMenuComplaints"><a href="#">Presenting Complaints<span class="badge pull-right" id="pMenuComplaintsBadge"></span></a></li>
+              <li id="pMenuFamily"><a href="#">Family History<span class="badge pull-right" id="pMenuFamilyBadge"></span></a></li>
+              <li id="pMenuProblems"><a href="#">Problems & Diagnoses<span class="badge pull-right" id="pMenuProblemsBadge"></span></a></li>
+			  <!-- <li id="pMenuDiagnosis"><a href="#">Diagnoses<span class="badge pull-right" id="pMenuDiagnosisBadge"></span></a></li> -->
+              <li id="pMenuProcedures"><a href="#">Procedures<span class="badge pull-right" id="pMenuProceduresBadge"></span></a></li>			  
+			  <li class="dropdown" id="pMenuSub1">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Investigations & Results
+                  <span class="caret"></span>
+				  <span class="badge pull-right" id="pMenuInvestigationsBadge"></span>
+                </a>
+                <ul class="dropdown-menu nav bs-sidenav nav-pills nav-stacked" id="pMenuSub1Proc">
+					<li id="pMenuInvestLab"><a href="#">Lab Tests<span class="badge pull-right" id="pMenuInvestLabBadge"></span></a></li>
+					<li id="pMenuInvestVital"><a href="#">Vital Signs<span class="badge pull-right" id="pMenuInvestVitalBadge"></span></a></li>
+				</ul>
+              </li>							  
+              <li id="pMenuMedications"><a href="#">Medications<span class="badge pull-right" id="pMenuMedicationsBadge"></span></a></li>
+              <li id="pMenuAllergies"><a href="#">Allergies & Adverse Reactions<span class="badge pull-right" id="pMenuAllergiesBadge"></span></a></li>
+              <li id="pMenuAlerts"><a href="#">System Alerts<span class="badge pull-right" id="pMenuAlertsBadge"></span></a></li>
+              <li id="pMenuSafetyAlerts"><a href="#">Safety Alerts<span class="badge pull-right" id="pMenuSafetyAlertsBadge"></span></a></li>
             </ul>
         </div>
 	  </div>
         <div id="summaryPage" class="collapse in col-sm-10">
 		<!-- graph view -->
-			<div class="container" id="graphHolder" style="height: 600px;"></div>
+			<div class="container-fluid" id="graphHolder" style="height: 600px;"></div>
 		<!-- list view -->
-			<div class="container" id="listHolder" style="display: none">
+			<div class="container-fluid" id="listHolder" style="display: none">
 				<div class="panel-body" id="patientListPnl" style="display: none">
 						<div class="panel panel-info">
-							<div class="panel-heading">Patients</div>
+							<div class="panel-heading" id="personHeaderWardText"></div>
 								<div class="table-responsive">
 									<table class="table display" id='patientListTable'>
 									</table>
 								</div>
 						</div>					
-					</div>
+				</div>
 			</div>
 		<!-- person view -->
-			<div class="container" id="PersonHolder" style="display: none">
-				<div class="panel panel-primary">
-					<div class="panel-heading" id="personHeader" ></div>
+			<div class="container-fluid col-sm-12" id="PersonHolder" style="display: none">
+				<div class="panel panel-primary col-sm-12" id="PersonInner">
+					<div class="panel-heading" id="personHeader" >
+						<div id="personHeaderText" class="text pull-left"></div>
+						<div class="btn-toolbar " role="toolbar" >
+							<button type="button" id="personHeaderCloseBtn" class="btn btn-default pull-right">Close</button>
+						</div>
+					</div>
 					<div class="panel-body" id="demographicsPnl">
 						<div class="panel panel-info">
-							<div class="panel-heading">Demographics</div>
+							<div class="panel-heading">Patient Demographics</div>
 								<div class="panel col-sm-6" >
 								  <div class="table-responsive">
 									<table class="table">
+										<tr><td class="active">Name</td><td id="demTName"></td></tr>
 										<tr><td class="active">Date of Birth</td><td id="demTDob"></td></tr> 
 										<tr><td class="active">Age</td><td id="demTAge"></td></tr>
 										<tr><td class="active">Sex</td><td id="demTSex"></td></tr>
@@ -235,25 +258,27 @@
 									</address>
 								</div>
 						</div>
-						<table class="table table-striped">
-							<tr><td class="active">Last Contact</td><td id="demTLastC"></td></tr>
-							<tr><td class="active">Contacts</td><td id="demTLContact"></td></tr>
-							<tr><td class="active">Vitals</td><td id="demTVitals"></td></tr>
-							<tr><td class="active">Problems</td><td id="demTProblems"></td></tr>
-							<tr><td class="active">Procedures</td><td id="demTProcedures"></td></tr>
-							<tr><td class="active">Orders</td><td id="demTOrders"></td></tr>
-							<tr><td class="active">Diagnoses</td><td id="demTDiagnoses"></td></tr>
-							<tr><td class="active">Allergies</td><td id="demTAllergies"></td></tr>
-						</table>
+				<!--
+						<div class="panel panel-info col-sm-3" >
+						<div class="panel-heading">Summary</div>
+							<table class="table table-striped">
+								<tr><td class="active">Last Contact</td><td id="demTLastC"></td></tr>
+								<tr><td class="active">Contacts</td><td id="demTLContact"></td></tr>
+								<tr><td class="active">Vitals</td><td id="demTVitals"></td></tr>
+								<tr><td class="active">Problems</td><td id="demTProblems"></td></tr>
+								<tr><td class="active">Procedures</td><td id="demTProcedures"></td></tr>
+								<tr><td class="active">Orders</td><td id="demTOrders"></td></tr>
+								<tr><td class="active">Diagnoses</td><td id="demTDiagnoses"></td></tr>
+								<tr><td class="active">Allergies</td><td id="demTAllergies"></td></tr>
+							</table>
+						</div>
+				-->
 					</div>
 					<div class="panel-body" id="contactsPnl" style="display: none">
 						<div class="panel panel-info">
 							<div class="panel-heading">Contacts</div>
 								<div class="table-responsive">
-									<table class="table">
-										<tr><th>Date</th><th>Time</th><th>Contact Type</th><th>Method</th><th>Provider</th></tr>
-										<!-- Temporary canned data below will be replaced by Vista Data -->
-										<tr><td>5/11/2013</td><td>11:00</td><td>Scheduled</td><td>Outpatient Consultation</td><td>Dr. Chris</td></tr>
+									<table class="table display" id="contactsTable">
 									</table>
 								</div>
 						</div>					
@@ -274,22 +299,35 @@
 						<div class="panel panel-info">
 							<div class="panel-heading">Procedures</div>
 								<div class="table-responsive">
-									<table class="table">
-										<tr><th>Date</th><th>Procedure Code</th><th>Procedure Description</th><th>Complications</th><th>Issues</th><th>Provider</th></tr>
-										<!-- Temporary canned data below will be replaced by Vista Data -->
-										<tr><td>5/11/2013</td><td>ICD9-650245</td><td>a very long medical description</td><td></td><td></td><td>Dr. Chris</td></tr>
+									<table class="table display" id="proceduresTable">
 									</table>
 								</div>
 						</div>					
 					</div>
-					<div class="panel-body" id="investigationsPnl" style="display: none">
+					<div class="panel-body" id="investLabPnl" style="display: none">
 						<div class="panel panel-info">
-							<div class="panel-heading">Investigations</div>
+							<div class="panel-heading">Lab Tests</div>
+							<div class="table-responsive">
+								<table class="table display" id="investigationsTable">
+								</table>
+							</div>
+						</div>
+					</div>
+					<div class="panel-body" id="investVitalPnl" style="display: none">
+						<div class="panel panel-info">
+							<div class="panel-heading">Vital Signs</div>
+							<div class="table-responsive">
+								<table class="table display" id="vitalsTable">
+								</table>
+							</div>
+						</div>
+						
+					</div>
+					<div class="panel-body" id="problemsPnl" style="display: none">
+						<div class="panel panel-info">
+							<div class="panel-heading">Problems and Issues</div>
 								<div class="table-responsive">
-									<table class="table">
-										<tr><th>Date requested</th><th>Investigation Code</th><th>Investigation Description</th><th>Date/time of investigation/result</th><th>Unit</th><th>Value</th><th>Provider</th></tr>
-										<!-- Temporary canned data below will be replaced by Vista Data -->
-										<tr><td>5/11/2013</td><td>ICD9-650245</td><td>Blood pressure reading</td><td>5/11/2013 13:40</td><td>hmg</td><td>120/80</td><td>Dr. Chris</td></tr>
+									<table class="table display" id="problemTable">
 									</table>
 								</div>
 						</div>					
@@ -298,10 +336,7 @@
 						<div class="panel panel-info">
 							<div class="panel-heading">Medications</div>
 								<div class="table-responsive">
-									<table class="table">
-										<tr><th>Date</th><th>Medication</th><th>Form</th><th>Route</th><th>Dose</th><th>Frequency</th><th>Instructions</th><th>Discontinue warning</th><th>Duration</th><th>Provider</th></tr>
-										<!-- Temporary canned data below will be replaced by Vista Data -->
-										<tr><td>5/11/2013</td><td>Aspirin</td><td>Tablet</td><td>Oral</td><td>500mg</td><td>Daily</td><td></td><td></td><td>ongoing</td><td>Dr. Chris</td></tr>
+									<table class="table display" id="medicationsTable">
 									</table>
 								</div>
 						</div>					
@@ -310,13 +345,28 @@
 						<div class="panel panel-info">
 							<div class="panel-heading">Allergies</div>
 								<div class="table-responsive">
-									<table class="table">
-										<tr><th>Date</th><th>Causative Agent</th><th>Description</th><th>Probability of recurrence</th><th>Provider</th></tr>
-										<!-- Temporary canned data below will be replaced by Vista Data -->
-										<tr><td>5/11/2013</td><td>Aspirin</td><td>Severe headaches</td><td></td><td>Dr. Chris</td></tr>
+									<table class="table display" id="allergyTable">
 									</table>
 								</div>
 						</div>					
+					</div>
+					<div class="panel-body" id="alertsPnl" style="display: none">
+						<div class="panel panel-info">
+							<div class="panel-heading">System Alerts</div>
+								<div class="table-responsive">
+									<table class="table display" id="alertsTable">
+									</table>
+								</div>
+						</div>					
+					</div>
+
+				</div>
+				<div class="panel panel-primary col-sm-4" id="detailHolder" style="display: none">
+					<div class="panel-heading" id="detailHeader" >
+					</div>
+					<div class="panel-body" >
+						<div class="table-responsive" id="detailPnl">
+						</div>
 					</div>
 				</div>
 			</div>
