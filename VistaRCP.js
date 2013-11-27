@@ -108,6 +108,9 @@ module.exports = {
 	if (type === 'getPatientsByWard') {
 		nodeVista.getPatientsByWard(params,ewd);
 	}
+	if (type === 'getPatientsByAge') {
+		nodeVista.getPatientsByAge(params,ewd);
+	}
     if (type === 'getDemographics') {
       return nodeVista.getDemographics(params.patientId,ewd);
     }

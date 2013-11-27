@@ -247,15 +247,15 @@ EWD.onSocketsReady = function() {
   $('body').on( 'click', '#oMenuTotalbyDept', function(event) {
     event.preventDefault();
     toggle(event);
-	EWD.sockets.sendMessage({type: 'getWardStats'});
+	//EWD.sockets.sendMessage({type: 'getWardStats'});
 	swapPanel('graphHolder');
 	return;
   })
   $('body').on( 'click', '#oMenuTotalbyAge', function(event) {
     event.preventDefault();
     toggle(event);
-	EWD.sockets.sendMessage({type: 'getAgeStats'});
-	swapPanel('graphHolder');
+	//EWD.sockets.sendMessage({type: 'getAgeStats'});
+	swapPanel('ageGraphHolder');
 	return;
  });
   //patient menu handlers
@@ -809,7 +809,7 @@ EWD.onSocketMessage = function(messageObj) {
 
 	if (messageObj.type === 'wardStats') {
 	//console.log('wardstats: '+ JSON.stringify(messageObj,2));
-		graphdata=[];
+		var graphdata=[];
 		var select=messageObj.message.type;
 		var wards=messageObj.message;
 		for (wardname in wards) {
@@ -817,24 +817,11 @@ EWD.onSocketMessage = function(messageObj) {
 			}
 		var options={};
 		var d=[];
-		var options={ series:{
-								bars: {
-									show:true,
-									barWidth: 0.6,
-									align: 'center'
-								}
-							},
-					  xaxis: {
-						mode: 'categories',
-						tickLength:0
-					 },
-					 grid: {
-						show:true,
-						hoverable:true,
-						clickable:true,
-						autoHighlight:true
-						}
-					};
+		var options={
+			series:{bars: {show:true, barWidth: 0.6, align: 'center'}},
+			xaxis: {mode: 'categories',tickLength:0},
+			grid: {show:true, hoverable:true, clickable:true, autoHighlight:true}
+			};
 			var d=[{data:graphdata}];
 		$.plot($("#graphHolder"), d, options);
 		EWD.application.currentPanel='graphHolder';
@@ -854,6 +841,42 @@ EWD.onSocketMessage = function(messageObj) {
 		});
 	return;
   };
+	if (messageObj.type === 'ageStats') {
+		//console.log('agestats: '+ JSON.stringify(messageObj,2));
+		var agegraphdata=[];
+		var select=messageObj.message.type;
+		var ages=messageObj.message;
+		for (agerange in ages) {
+			agegraphdata.push([agerange,ages[agerange].total])
+			}
+		var options={};
+		var d=[];
+		var options={
+			series:{bars: {show:true, barWidth: 0.6, align: 'center'}},
+			xaxis: {mode: 'categories',tickLength:0},
+			yaxis: {minTickSize: 1, tickDecimals: 0},
+			grid: {show:true, hoverable:true, clickable:true, autoHighlight:true}
+			};
+			var d=[{data:agegraphdata}];
+		$.plot($("#ageGraphHolder"), d, options);
+		$("#ageGraphHolder").hide();
+		//EWD.application.currentPanel='graphHolder';
+		$("#ageGraphHolder").unbind();
+		$("#ageGraphHolder").bind('plotclick',function(event,pos,item) {
+			event.preventDefault();
+			event.stopPropagation();
+			if (item) {
+				EWD.sockets.sendMessage({
+					type: 'getPatientsByAge',
+					params: {
+					  ageRange: item.series.data[item.dataIndex][0]
+					}
+				});
+				$('#personHeaderWardText').text('Patients in Age Range: '+item.series.data[item.dataIndex][0]);
+			};
+		});
+	return;
+  };  
 	//catch any uncaught messages
 	console.log(JSON.stringify(messageObj));
 };

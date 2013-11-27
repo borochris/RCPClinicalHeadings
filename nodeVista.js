@@ -102,8 +102,36 @@ module.exports = {
 		});
 	  return;
 	},
-
+	//improved get stats to include age and wards in one call
 	getStats : function(params,ewd) {
+		var allStatsRes = new ewd.mumps.GlobalNode("%zewdTemp",[process.pid]);
+		allStatsRes._delete();
+		var result=ewd.mumps.function('getPatientSummary^ZZCPCR00','xx');
+		var document=allStatsRes._getDocument();
+		allStatsRes._delete();
+		ewd.session.$('wards')._delete();
+		ewd.session.$('wards')._setDocument(document.outputs.wards);
+		ewd.session.$('ages')._delete();
+		ewd.session.$('ages')._setDocument(document.outputs.ages);
+		ewd.session.$('patients')._delete();
+		ewd.session.$('patients')._setDocument(document.outputs.patients);
+		ewd.sendWebSocketMsg({
+			type:'wardStats',
+			message:document.outputs.wards
+		})
+		/*
+		ewd.sendWebSocketMsg({
+			type:'patientSummaryList2',
+			message:document.outputs.patients
+		})
+		*/
+		ewd.sendWebSocketMsg({
+			type:'ageStats',
+			message:document.outputs.ages
+		})
+	},
+	//no longer used
+	getStatsOLD : function(params,ewd) {
 		if (!wardIndex) var wardIndex = new ewd.mumps.GlobalNode("DPT", ["CN"]);
 		var results = [];
 		var wards={};
@@ -132,9 +160,9 @@ module.exports = {
 		var results=[];
 		var wards=ewd.session.$('wards')._getDocument();
 		var patients=wards[params.wardName].patients;
+		var allPatients=ewd.session.$('patients')._getDocument();
 		for (patientId in patients){
-			results.push(this.getPatientSummary(patients[patientId],ewd));
-			//this.getDemographics(patients[patientId],ewd);
+			results.push(allPatients[patientId]);
 		}
 		ewd.sendWebSocketMsg({
 			type:'patientSummaryList',
@@ -142,6 +170,21 @@ module.exports = {
 		})
 		return;
 	},
+	getPatientsByAge: function(params,ewd) {
+		var results=[];
+		var ages=ewd.session.$('ages')._getDocument();
+		var patients=ages[params.ageRange].patients;
+		var allPatients=ewd.session.$('patients')._getDocument();
+		for (patientId in patients){
+			results.push(allPatients[patientId]);
+		}
+		ewd.sendWebSocketMsg({
+			type:'patientSummaryList',
+			message:results
+		})
+		return;
+	},
+	//This no longer used
 	getPatientSummary: function(patientId,ewd) {
 		var patient= new ewd.mumps.GlobalNode("DPT", [patientId,'0']);
 		var patientRec0=patient._value;

@@ -8,15 +8,56 @@ gets(z)	;generic call to GETS^DIQ
 	s fileNo=$g(inputs("fileNo")) i 'fileNo q "no file supplied"
 	s ien=$g(inputs("recordId")) i 'ien q "no record Id supplied"
 	s fields=$g(inputs("fields")) i fields="" s fields="**" ;default is all fields,subfields and multiples
+	s flags=$g(inputs("flags")) i flags="" s flags="RNIE" ;default is internal, external, filednames, no null results
 	s ^cpc("g",fileNo)=1
 	s ienX=ien_","
 	s fileName=$$validName($p($G(^DIC(fileNo,0)),"^",1))
 	s outputs(fileName,"id")=ien
-	d GETS^DIQ(fileNo,ienX,fields,"RNIE","results")
+	d GETS^DIQ(fileNo,ienX,fields,flags,"results")
 	d treeIt
 	m ^%zewdTemp($j,"outputs")=outputs
 	;i fileNo=55 m ^cpc($j)=outputs
 	q ""
+getPatientSummary(z)	;call to LIST^DIC
+	;?MAKE THIS GENERIC OR SPECIFIC
+	;Do spefic to this call for now
+	s ^cpc("gps")=1
+	n errors,results,outputs,DILOCKTM,DISYS,DT,DTIME,DUZ,IO,O,U
+	D LIST^DIC(2,"",".01;.02;.033;.03IE;.1;.09","Q","","","","CN","","","results","errors")
+	;results("DILIST",2,10)=24
+	;results("DILIST","ID",10,.01)="DEMO,JOHN"
+	;results("DILIST","ID",10,.02)="MALE"
+	;results("DILIST","ID",10,.03,"E")="03/07/2011"
+	;results("DILIST","ID",10,.03,"I")=3110307
+	;results("DILIST","ID",10,.033)=58
+	;results("DILIST","ID",10,.09)=""
+	;results("DILIST","ID",10,.1)="3 WEST"
+	f i="<10","10-20","20-30","30-40","40-50","50-60","60-70","70-80",">80" s outputs("ages",i,"total")=0
+	s c=0,i="" f  s i=$o(results("DILIST","ID",i)) q:i=""  q:'i  d
+	. s ien=results("DILIST",2,i)
+	. s wardName=results("DILIST","ID",i,.1)
+	. s name=results("DILIST","ID",i,.01)
+	. s sex=results("DILIST","ID",i,.02)
+	. s dateI=results("DILIST","ID",i,.03,"I")
+	. s dateE=results("DILIST","ID",i,.03,"E")
+	. s dateUK=$p(dateE,"/",2)_"/"_$p(dateE,"/",1)_"/"_$p(dateE,"/",3)
+	. s age=results("DILIST","ID",i,.033)
+	. s ssn=results("DILIST","ID",i,.09)
+	. s outputs("wards",wardName,"total")=$g(outputs("wards",wardName,"total"))+1
+	. ;s outputs("wards",wardName,"patients",outputs("wards",wardName,"total")-1)=ien
+	. s outputs("wards",wardName,"patients",ien)=ien
+	. s outputs("patients",ien,"id")=ien
+	. s outputs("patients",ien,"name")=name
+	. s outputs("patients",ien,"sex")=sex
+	. s outputs("patients",ien,"DOB")=dateUK
+	. s outputs("patients",ien,"SSN")=ssn
+	. s ageR=$s(age<10:"<10",age<20:"10-20",age<30:"20-30",age<40:"30-40",age<50:"40-50",age<60:"50-60",age<70:"60-70",age<80:"70-80",1:">80")
+	. s outputs("ages",ageR,"total")=outputs("ages",ageR,"total")+1
+	. s outputs("ages",ageR,"patients",ien)=ien
+	. s c=c+1
+	m ^%zewdTemp($j,"outputs")=outputs
+	s ^cpc("gps")=2
+	Q ""
 orig	;
 	s fn="" f  s fn=$o(results(fn)) q:fn=""  d
 	. i fn'=fileNo s sfName=$p($g(^DD(fn,0)),"^",1) s:$L(sfName," SUB-FIELD")>1 sfName=$p(sfName," SUB-FIELD",1) S sfName=$$validName(sfName)
