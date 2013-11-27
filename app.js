@@ -109,7 +109,9 @@ dispJSON = function(jobj,debug) {
 var toggle=function(e) {
 	e.preventDefault();
 	$('.active').toggleClass('active', false);
-	$('#'+e.currentTarget.id).toggleClass("active", true);
+	var current=e.currentTarget.id;
+	if (current == 'pMenuInvestLab' || current == 'pMenuInvestVital') current='pMenuSub1';
+	$('#'+current).toggleClass("active", true);
 	return;
 };
 EWD.onSocketsReady = function() {
@@ -167,12 +169,42 @@ EWD.onSocketsReady = function() {
       });
     }
   });
+  
+  $("#AllInReactant").select2({
+    minimumInputLength: 1,
+    query: function (query) {
+      EWD.application.selectReactant = {
+        callback: query.callback,
+      };
+      EWD.sockets.sendMessage({
+        type: 'drugQuery',
+        params: {
+          prefix: query.term
+        }
+      });
+    }
+  });
+  $("#AllInSymptoms").select2({
+    minimumInputLength: 1,
+	multiple:true,
+    query: function (query) {
+      EWD.application.selectSymptom = {
+        callback: query.callback,
+      };
+      EWD.sockets.sendMessage({
+        type: 'symptomQuery',
+        params: {
+          prefix: query.term
+        }
+      });
+    }
+  });
   $('#patientBtn').click(function(e) {
     e.preventDefault();
 	EWD.application.onePatient={};
 	onePatient={};
 	$('#pMenuInvestigationsBadge').text('');
-	$('#personHeaderWardText').text('');
+	//$('#personHeaderWardText').text('');
 	$('#pMenuInvestVitalBadge').text('');
 	$('#pMenuInvestLabBadge').text('');
 	$('#pMenuContactsBadge').text('');
@@ -188,6 +220,28 @@ EWD.onSocketsReady = function() {
           patientId: $('#selectedPatient').select2('val')
         }
       });    
+  });
+  $('#newAllergyBtn').click(function(e) {
+		e.preventDefault();
+		$('#AllInPatientId').val(onePatient.demographics.localPid);
+		$('#AllInReactant').select2("val","");
+		$('#AllInComments').val('')
+		$('#AllInSymptoms').select2("val", "");
+		$('#AllergyInputFormHolder').modal('show');
+  });
+  $('#AllergyInputSubmit').click(function(e) {
+  e.preventDefault();
+      EWD.sockets.submitForm({
+      fields: {
+        reactant: $('#AllInReactant').val(),
+		observe: ($("#AllInTimeGroup").find("label.active").find("input").attr('value'))||'',
+        symptoms: $('#AllInSymptoms').val(),
+        comments: $('#AllInComments').val(),
+        patient: $('#AllInPatientId').val()
+      },
+      messageType: 'EWD.form.newAllergy',
+	  alertTitle: 'An error occurred'
+    });
   });
   //outer menu handlers
   $('body').on( 'click', '#oMenuTotalbyDept', function(event) {
@@ -210,6 +264,7 @@ EWD.onSocketsReady = function() {
 	swapPanel('demographicsPnl');
 	});
  $('body').on( 'click', '#pMenuContact', function(event) {toggle(event);swapPanel('contactsPnl');})
+ $('body').on( 'click', '#pMenuComplaints', function(event) {toggle(event);swapPanel('complaintsPnl');})
  $('body').on( 'click', '#pMenuDiagnosis', function(event) {toggle(event);swapPanel('diagnosisPnl');})
  $('body').on( 'click', '#pMenuProcedures', function(event) {toggle(event);swapPanel('proceduresPnl');})
  $('body').on( 'click', '#pMenuProblems', function(event) {toggle(event);swapPanel('problemsPnl');})
@@ -238,7 +293,9 @@ EWD.onSocketMessage = function(messageObj) {
     if (messageObj.ok) $('#loginPanel').modal('hide');
     return;
   }
-
+  if (messageObj.type == 'newAllergyCreated') {
+	$('#AllergyInputFormHolder').modal('hide');
+  }
   if (messageObj.type === 'loggedInAs') {
     $('#loggedInAs').text(messageObj.message.fullName);
     return;
@@ -246,6 +303,16 @@ EWD.onSocketMessage = function(messageObj) {
 	if (messageObj.type === 'patientMatches') {
 		EWD.application.select2.results = messageObj.message;
 		EWD.application.select2.callback(EWD.application.select2);
+		return;
+	}
+	if (messageObj.type === 'drugMatches' ) {
+		EWD.application.selectReactant.results = messageObj.message;
+		EWD.application.selectReactant.callback(EWD.application.selectReactant);
+		return;
+	}
+		if (messageObj.type === 'symptomMatches' ) {
+		EWD.application.selectSymptom.results = messageObj.message;
+		EWD.application.selectSymptom.callback(EWD.application.selectSymptom);
 		return;
 	}
 	if (messageObj.type === 'demographics') {
@@ -291,7 +358,7 @@ EWD.onSocketMessage = function(messageObj) {
 			EWD.application.onePatient={};
 			onePatient={};
 			$('#pMenuInvestigationsBadge').text('');
-			$('#personHeaderWardText').text('');
+			//$('#personHeaderWardText').text('');
 			$('#pMenuInvestVitalBadge').text('');
 			$('#pMenuInvestLabBadge').text('');
 			$('#pMenuContactsBadge').text('');
@@ -323,13 +390,15 @@ EWD.onSocketMessage = function(messageObj) {
 		onePatient.vitals=data;
 		for (var i=0;i<data.length;i++) {
 			var vital=data[i].GmrvVitalMeasurement;
-			vitalData.push([vital.Date_timeVitalsEntered.E,vital.VitalType.E,vital.Rate.E,vital.EnteredBy.E]);
+			//vitalData.push([vital.Date_timeVitalsEntered.E,vital.VitalType.E,vital.Rate.E,vital.EnteredBy.E]);
+			vitalData.push([vital.Date_timeVitalsEntered.E,vital.VitalType.E,vital.Rate.E]);
 		}
 		var vitalsTableDT=$('#vitalsTable').dataTable({
 			'bDestroy':true,
 			'aaData': vitalData,
 			'aoColumns': [
-				{'sTitle':'Date/Time'},{'sTitle':'Type'},{'sTitle':'Measurement'},{'sTitle':'Entered by'}
+				//{'sTitle':'Date/Time'},{'sTitle':'Type'},{'sTitle':'Measurement'},{'sTitle':'Entered by'}
+				{'sTitle':'Date/Time'},{'sTitle':'Type'},{'sTitle':'Measurement'}
 			]
 		}).css('width','');
 		$(vitalsTableDT.fnGetNodes()).click(function(e){	
@@ -348,8 +417,50 @@ EWD.onSocketMessage = function(messageObj) {
 			$('#detailPnl').html(dispJSON(onePatient.vitals[rowClicked]));
 			showDetail();
 		});
+		return;
+	}
+	
+	if (messageObj.type === 'complaintCount') {
+		$('#pMenuComplaintsBadge').text(messageObj.message.length||''); 
+
+		var complaintData=[];
+		var data=messageObj.message;
+		EWD.application.onePatient.complaints=data;
+		onePatient.complaints=data;
+		for (var i=0;i<data.length;i++) {
+			var complaint=data[i].VNarrativeText;
+			var text='';
+			var sp='';
+			for (var cl=1; (complaint.Text[cl]); cl++) { text=text+sp+complaint.Text[cl]; sp=' '; }			
+			complaintData.push([complaint.EventDateAndTime.E,complaint.TextType.E,text]);
+		}
+		var complaintsTableDT=$('#complaintsTable').dataTable({
+			'bDestroy':true,
+			'aaData': complaintData,
+			'aoColumns': [
+				{'sTitle':'Date/Time'},{'sTitle':'Type'},{'sTitle':'Description'}
+			]
+		}).css('width','');
+		$(complaintsTableDT.fnGetNodes()).click(function(e){	
+			if ($(this).hasClass('success')) {
+				$(this).removeClass('success');
+			}
+			else {
+				complaintsTableDT.$('tr.success').removeClass('success');
+				$(this).addClass('success');
+			};
+			e.preventDefault();
+			e.stopPropagation();
+			$('#detailHeader').text('Presenting Complaint Details');
+			var rowClicked=complaintsTableDT.fnGetPosition( this );
+			//EWD.application.dump=rowClicked;
+			$('#detailPnl').html(dispJSON(onePatient.complaints[rowClicked]));
+			showDetail();
+		});
 
 		return;
+		
+		
 	}
 	if (messageObj.type === 'orderCount') {
 		//console.log(JSON.stringify(messageObj));
@@ -366,13 +477,15 @@ EWD.onSocketMessage = function(messageObj) {
 		for (var i=0;i<data.length;i++) {
 			var order=data[i].Order;
 			var findings=''; if (order.Findings) findings=order.Findings.E;
-			orderData.push([order.id,order.WhenEntered.E,order.OrderableItems[0].OrderableItem.E,findings,order.WhoEntered.E])
+			//orderData.push([order.id,order.WhenEntered.E,order.OrderableItems[0].OrderableItem.E,findings,order.WhoEntered.E])
+			orderData.push([order.WhenEntered.E,order.OrderableItems[0].OrderableItem.E,findings])
 		}
 		var investigationsTableDT=$('#investigationsTable').dataTable({
 			'bDestroy':true,
 			'aaData': orderData,
 			'aoColumns': [
-				{'sTitle':'order No'},{'sTitle':'Date Entered'},{'sTitle':'Test'},{'sTitle':'Result'},{'sTitle':'Provider'}
+				//{'sTitle':'order No'},{'sTitle':'Date Entered'},{'sTitle':'Test'},{'sTitle':'Result'},{'sTitle':'Provider'}
+				{'sTitle':'Date Entered'},{'sTitle':'Test'},{'sTitle':'Result'}
 			]
 		}).css('width','');
 		$(investigationsTableDT.fnGetNodes()).click(function(e){
@@ -391,9 +504,9 @@ EWD.onSocketMessage = function(messageObj) {
 			$('#detailPnl').html(dispJSON(onePatient.orders[rowClicked]));
 			showDetail();
 		});
-
 	return;
 	}
+	
 	if (messageObj.type === 'visitCount') {
 		$('#demTContacts').text(messageObj.message.length);
 		$('#pMenuContactsBadge').text(messageObj.message.length||'');
@@ -404,14 +517,17 @@ EWD.onSocketMessage = function(messageObj) {
 		onePatient.visits=data;
 		for (var i=0;i<data.length;i++) {
 			var visit=data[i].Visit;
+			var type='';
+			if (visit.EncounterType) {type=visit.EncounterType.E}
+			else if (visit.Type) {type=visit.Type.E};
 			var location=''; if (visit.HospitalLocation) location=visit.HospitalLocation.E;
-			visitData.push([visit.Visit_admitDate_time.E,visit.id,visit.Type.E,location,visit.CreatedByUser.E]);
+			visitData.push([visit.Visit_admitDate_time.E,type,location]);
 		}
 		var contactsTableDT=$('#contactsTable').dataTable({
 			'bDestroy':true,
 			'aaData': visitData,
 			'aoColumns': [
-				{'sTitle':'Date/Time'},{'sTitle':'id'},{'sTitle':'Type'},{'sTitle':'Location'},{'sTitle':'Entered by'}
+				{'sTitle':'Date/Time'},{'sTitle':'Type'},{'sTitle':'Location'}
 			]
 		}).css('width','');
 		$(contactsTableDT.fnGetNodes()).click(function(e){
@@ -442,16 +558,17 @@ EWD.onSocketMessage = function(messageObj) {
 		onePatient.procedures=data;
 		for (var i=0;i<data.length;i++) {
 			var procedure=data[i].VCpt;
+			var procName='';
 			var narrative=' ';
-			if (procedure.ProviderNarrative) {narrative=procedure.ProviderNarrative.E;}
-			else if (procedure.CptShortName) {narrative=procedure.CptShortName.E;};
-			procedureData.push([procedure.Visit.E,procedure.id,narrative]);
+			if (procedure.CptShortName) {procName=procedure.CptShortName.E;};
+			if (procedure.ProviderNarrative) {narrative=procedure.ProviderNarrative.E;};	
+			procedureData.push([procedure.Visit.E,procName,narrative]);
 		}
 		var proceduresTableDT=$('#proceduresTable').dataTable({
 			'bDestroy':true,
 			'aaData': procedureData,
 			'aoColumns': [
-				{'sTitle':'Date/Time'},{'sTitle':'id'},{'sTitle':'Narrative'}
+				{'sTitle':'Date/Time'},{'sTitle':'Name'},{'sTitle':'Note'}
 			]
 		}).css('width','');
 		$(proceduresTableDT.fnGetNodes()).click(function(e){
@@ -529,55 +646,13 @@ EWD.onSocketMessage = function(messageObj) {
 				if (medicineRecords[i].Non_vaMeds.Schedule) schedule=medicineRecords[i].Non_vaMeds.Schedule.E;
 				if (medicineRecords[i].Non_vaMeds.DocumentedBy) provider=medicineRecords[i].Non_vaMeds.DocumentedBy.E;
 			}
-			medicationData.push([startDate,stopDate,status,drugs,dosage,schedule,provider]);
+			medicationData.push([drugs,dosage,schedule,status]);
 		};
-		/*
-		var doseArr=m.UnitDose;
-		//var drugArr=messageObj.message[0].PharmacyPatient.DispenseDrug;
-		var nonVAArr=m.Non_vaMeds;
-		
-		var drugCount=0;
-		if (doseArr) {
-			drugCount=doseArr.length;
-			for (var i=0;i<doseArr.length;i++) {
-				var dose=doseArr[i];
-				var startDate=''; if (dose.StartDate_time) startDate=dose.StartDate_time.E;
-				var stopDate=''; if (dose.StopDate_time) stopDate=dose.StopDate_time.E;
-				var dosage=''; if (dose.Dose) {dosage=dose.Dose.E} else if (dose.DosageOrdered) {dosage=dose.DosageOrdered.E};
-				var drugs=''; if (dose.DispenseDrug) for (var j=0;j<dose.DispenseDrug.length;j++) {var sp=''; drugs=drugs+sp+dose.DispenseDrug[j].DispenseDrug.E; sp=', '};
-				medicationData.push([startDate,stopDate,dose.Status.E,drugs,dosage,dose.Schedule.E,dose.Provider.E]);
-			}
-		}
-		if (drugArr) {
-			drugCount=drugArr.length;
-			for (var i=0;i<drugArr.length;i++) {
-				var drug=drugArr[i];
-				var dose=doseArr[i];
-				var startDate=''; if (dose.StartDate_time) startDate=dose.StartDate_time.E;
-				var stopDate=''; if (dose.StopDate_time) stopDate=dose.StopDate_time.E;
-				var dosage=''; if (dose.Dose) {dosage=dose.Dose.E} else if (dose.DosageOrdered) {dosage=dose.DosageOrdered.E};
-				medicationData.push([startDate,stopDate,dose.Status.E,drug.DispenseDrug.E,dosage,dose.Schedule.E,dose.Provider.E]);
-			}
-		}
-		if (nonVAArr) {
-			drugCount=drugCount+nonVAArr.length;
-			for (var i=0;i<nonVAArr.length;i++) {
-				var drug=nonVAArr[i];
-				var stopDate=''; if (drug.DiscontinuedDate) stopDate=drug.DiscontinuedDate.E;
-				var startDate=''; if (drug.StartDate) startDate=drug.StartDate.E;
-				var status=''; if (drug.Status) status=drug.Status.E;
-				var drugName='',dosage='';
-				if (drug.Dosage) {dosage=drug.Dosage.E};
-				if (drug.DispenseDrug) {drugName=drug.DispenseDrug.E} else {drugName=dosage; dosage='';};
-				medicationData.push([startDate,stopDate,status,drugName,dosage,drug.Schedule.E,drug.DocumentedBy.E]);
-			}
-		}
-		*/
 		var medicationsTableDT=$('#medicationsTable').dataTable({
 			'bDestroy':true,
 			'aaData': medicationData,
 			'aoColumns': [
-				{'sTitle':'start Date/Time'},{'sTitle':'stop date/time'},{'sTitle':'Status'},{'sTitle':'Drug'},{'sTitle':'Dose'},{'sTitle':'Schedule'},{'sTitle':'Provider'}
+				{'sTitle':'Medication Name'},{'sTitle':'Dose'},{'sTitle':'Frequency'},{'sTitle':'Status'}
 			]
 		}).css('width','');
 		$(medicationsTableDT.fnGetNodes()).click(function(e){
@@ -649,13 +724,15 @@ EWD.onSocketMessage = function(messageObj) {
 			if (problem.Problem) {problemText = problem.Problem.E}
 			else if (problem.ProviderNarrative) {problemText = problem.ProviderNarrative.E};
 			if (problemText == 'Unresolved') { if (problem.ProviderNarrative) {problemText = problem.ProviderNarrative.E}};
-			problemData.push([problem.Nmbr.E,problem.DateEntered.E,problemText,problem.Diagnosis.E,problem.RecordingProvider.E])
+			//problemData.push([problem.Nmbr.E,problem.DateEntered.E,problemText,problem.Diagnosis.E,problem.RecordingProvider.E])
+			problemData.push([problem.Nmbr.E,problem.DateEntered.E,problemText])
 		}
 		var problemTableDT=$('#problemTable').dataTable({
 			'bDestroy':true,
 			'aaData': problemData,
 			'aoColumns': [
-				{'sTitle':'Problem No'},{'sTitle':'Date Entered'},{'sTitle':'Description'},{'sTitle':'Diagnosis'},{'sTitle':'Provider'}
+				//{'sTitle':'Problem No'},{'sTitle':'Date Entered'},{'sTitle':'Description'},{'sTitle':'Diagnosis'},{'sTitle':'Provider'}
+				{'sTitle':'Problem No'},{'sTitle':'Date Entered'},{'sTitle':'Description'}
 			]
 		}).css('width','');
 		$(problemTableDT.fnGetNodes()).click(function(e){
@@ -688,10 +765,12 @@ EWD.onSocketMessage = function(messageObj) {
 			var comment='',space='';
 			if (allergy.Comments) {
 				for (var c=0;c<allergy.Comments.length;c++) {
-					for (var cl=1;(allergy.Comments[c].Comments[cl]);cl++) {
-						comment=comment+space+allergy.Comments[c].Comments[cl];
-						space=' ';
-						}
+					if (allergy.Comments[c].Comments) {
+						for (var cl=1;(allergy.Comments[c].Comments[cl]);cl++) {
+							comment=comment+space+allergy.Comments[c].Comments[cl];
+							space=' ';
+							}
+					};
 				}};
 			var reaction=''; var sp='';
 			if (allergy.Reactions) {
@@ -700,13 +779,13 @@ EWD.onSocketMessage = function(messageObj) {
 					sp=', ';
 				}
 			}
-			allergyData.push([i,allergy.OriginationDate_time.E,allergy.Reactant.E,reaction,comment,'',allergy.Originator.E])
+			allergyData.push([i,allergy.Reactant.E,reaction,comment])
 		}
 		var allergyTableDT=$('#allergyTable').dataTable({
 			'bDestroy':true,
 			'aaData': allergyData,
 			'aoColumns': [
-				{'bSearchable':false,'bVisible':false,'sTitle':'rowId'},{'sTitle':'Date'},{'sTitle':'Causative Agent'},{'sTitle':'Reaction'},{'sTitle':'Description'},{'sTitle':'Probability of recurrence'},{'sTitle':'Provider'}
+				{'bSearchable':false,'bVisible':false,'sTitle':'rowId'},{'sTitle':'Causative Agent'},{'sTitle':'Reaction'},{'sTitle':'Description'}
 			]
 		}).css('width','');
 		$(allergyTableDT.fnGetNodes()).click(function(e){

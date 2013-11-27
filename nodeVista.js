@@ -41,6 +41,67 @@ module.exports = {
       });
       return;
 	},
+	simpleDrugLookup: function(params,ewd) {
+		if (!reactantIndex) var reactantIndex = new ewd.mumps.GlobalNode("GMRD", ["120.82","B"]);
+		if (!NatDrugIndex) var NatDrugIndex= new ewd.mumps.GlobalNode("PSNDF", ["50.6","B"]);
+		var results = [];
+		var names={};
+		var i=0;
+		var file=';PSNDF(50.6,';
+		names[file]=0;
+		NatDrugIndex._forPrefix(params.prefix.toUpperCase(), function(name,node) {
+			node._forEach(function(id) {
+				i++;
+				if (i>30) return true;
+				var zid=''+id+file;
+				results.push({id:zid, text: name});
+				names[zid] = name;
+			});
+			if (i>30) return true;
+		});
+		var file=';GMRD(120.82,'; //;GMRD(120.82,
+		names[file]=0;
+		reactantIndex._forPrefix(params.prefix.toUpperCase(), function(name, node) {
+			node._forEach(function(id) {
+				i++;
+				if (i>40) return true;
+				var zid=''+id+file;
+				results.push({id: zid, text: name});
+				names[zid] = name;
+			});
+			if (i>40) return true;
+		});
+		ewd.session.$('reactants')._delete();
+		ewd.session.$('reactants')._setDocument(names);
+		ewd.sendWebSocketMsg({
+			type: 'drugMatches',
+			message: results
+		});
+		
+	  return;
+	},
+	simpleSymptomLookup: function(params,ewd) {
+		if (!symptomIndex) var symptomIndex = new ewd.mumps.GlobalNode("GMRD", ["120.83","B"]);
+		var results = [];
+		var names={};
+		var i=0;
+		symptomIndex._forPrefix(params.prefix.toUpperCase(), function(name, node) {
+			node._forEach(function(id) {
+				i++;
+				if (i>40) return true;
+				results.push({id: id, text: name});
+				names[id] = name
+			});
+			if (i>40) return true;
+		});
+		ewd.session.$('symptoms')._delete();
+		ewd.session.$('symptoms')._setDocument(names);
+		ewd.sendWebSocketMsg({
+			type: 'symptomMatches',
+			message: results
+		});
+	  return;
+	},
 
 	getStats : function(params,ewd) {
 		if (!wardIndex) var wardIndex = new ewd.mumps.GlobalNode("DPT", ["CN"]);
@@ -86,6 +147,29 @@ module.exports = {
 		var patientRec0=patient._value;
 		var patientObj=patientRec0.split('^');
 		return {id:patientId,name:patientObj[0],sex:patientObj[1],DOB:this.convertFtoStringDate(patientObj[2]),SSN:patientObj[8]}
+	},
+	listComplaints: function(patientId,ewd) {
+		var complaintsP = new ewd.mumps.GlobalNode("AUPNVNT", ["AC",patientId]);
+		var complaints=[];
+		var complaintsList=complaintsP._getDocument();
+		for (ien in complaintsList) {
+			complaints.push(this.getComplaint(patientId,ien,ewd));
+		};
+		ewd.sendWebSocketMsg({
+			type: 'complaintCount',
+			message: complaints
+		});
+		return;
+	},
+	getComplaint: function(patientId,complaintId,ewd) {
+		var complaintRes = new ewd.mumps.GlobalNode("%zewdTemp",[process.pid]);
+		complaintRes._delete();
+		complaintRes._setDocument({'inputs':{'fileNo':9000010.34,'patientId':patientId,'recordId':complaintId}});
+		var result=ewd.mumps.function('gets^ZZCPCR00','xx');
+		var document=complaintRes._getDocument();
+		complaintRes._delete();
+		//console.log(JSON.stringify(document.outputs));
+		return document.outputs;
 	},
 	listVisits: function(patientId,ewd) {
 		var visitsP = new ewd.mumps.GlobalNode("AUPNVSIT", ["C",patientId]);
@@ -296,6 +380,22 @@ module.exports = {
 			message:document.outputs
 		})
 		return document.name;
+	},
+	addAllergy: function(inputs,ewd) {
+		var allergy = new ewd.mumps.GlobalNode("%zewdTemp",[process.pid]);
+		allergy._delete();
+		allergy._setDocument({'inputs': inputs});
+		var result=ewd.mumps.function('wrapNewAllergy^ZZCPCR00','xx');
+		if (result!='') return result;
+		var document=allergy._getDocument();
+		allergy._delete();
+		this.listAllergies(inputs.patientId,ewd) ; //refresh allergy count and list
+		ewd.sendWebSocketMsg({
+			type: 'newAllergyCreated',
+			message: document.outputs
+		});
+		
+		return;
 	},
 	convertFtoStringDate: function(x) {var x=x.toString(); x=x.slice(5,7)+'/'+x.slice(3,5)+'/'+(parseInt(x.slice(0,3))+1700); return x}
 	

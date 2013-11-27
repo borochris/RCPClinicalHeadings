@@ -85,6 +85,9 @@
 		table-layout: fixed;
 		word-wrap: break-word;
 	  }
+		.scroll-x {
+			overflow-x: auto;
+		}
     </style>
 
 
@@ -168,7 +171,55 @@
         </div>
       </div>
     </div>
-	
+	<!-- Allergy Input Modal Panel -->
+	<div id="AllergyInputFormHolder" class="modal fade display: none" >
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<a class="close" data-dismiss="modal">X</a>
+					<h3 id="AllergyInputFormTitle"> Add Allergy </h3>
+				</div>
+				<div class="modal-body" id="AllergyInputFormBody">
+					<form role="form" class="form-horizontal" id="AllergyInputForm">
+						<input type="hidden" class="form-control display: none" type="text" id="AllInPatientId"> </input>
+						<div class="form-group">
+							<label class="col-sm-2 control-label" for="AllInReactant">Reactant</label>
+							<div class="col-sm-10">
+								<input type="hidden" id="AllInReactant" style="width:300px" ></input>
+							</div>
+						</div>
+						<div class="form-group ">
+							<label class="col-sm-2 control-label" for="AllInTimeGroup"></label>
+							<div class="col-sm-10 btn-group" id="AllInTimeGroup" data-toggle="buttons" >
+									<label class="btn btn-default" >
+										<input type="radio" name="AllInTimeScale"  value='o' >Observed
+									</label>
+									<label class="btn btn-default" >
+										<input type="radio" name="AllInTimeScale"  value='h' checked>Historical
+									</label>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label" for="AllInSymptoms">Symptoms</label>
+							<div class="col-sm-10">
+								<input type="hidden" id="AllInSymptoms" style="width:300px"></input>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label" for="AllInComments">Comments</label>
+							<div class="col-sm-10">
+								<textarea rows="3" class="col-sm-10 form-control" id="AllInComments"></textarea>
+							</div>
+						</div>
+						<div class="form-group">
+							<button href="#" id="AllergyInputSubmit" class="btn btn-primary form-control">submit here</button>
+						</div>
+						<div class="text-center text-error" id="AllergyInputAlertText"></div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
 	
     <!-- Main body -->
     <div class="container-fluid">
@@ -181,13 +232,12 @@
         </div>
 		<div  id="patientMenu" style="display: none">
             <ul class="nav bs-sidenav nav-pills nav-stacked">
-			<li class="divider"></li>
 			<li class="divider">___________________________________</li>
 			  <li id="pMenuSummary" class="active"><a href="#">Patient Demographics</a></li>
               <li id="pMenuContact"><a href="#">Reasons for Contact<span class="badge pull-right" id="pMenuContactsBadge"></span></a></li>
-              <li id="pMenuComplaints"><a href="#">Presenting Complaints<span class="badge pull-right" id="pMenuComplaintsBadge"></span></a></li>
+              <li id="pMenuComplaints"><a href="#">Presenting Complaints/ Issues<span class="badge pull-right" id="pMenuComplaintsBadge"></span></a></li>
               <li id="pMenuFamily"><a href="#">Family History<span class="badge pull-right" id="pMenuFamilyBadge"></span></a></li>
-              <li id="pMenuProblems"><a href="#">Problems & Diagnoses<span class="badge pull-right" id="pMenuProblemsBadge"></span></a></li>
+              <li id="pMenuProblems"><a href="#">Problems,Issues & Diagnoses<span class="badge pull-right" id="pMenuProblemsBadge"></span></a></li>
 			  <!-- <li id="pMenuDiagnosis"><a href="#">Diagnoses<span class="badge pull-right" id="pMenuDiagnosisBadge"></span></a></li> -->
               <li id="pMenuProcedures"><a href="#">Procedures<span class="badge pull-right" id="pMenuProceduresBadge"></span></a></li>			  
 			  <li class="dropdown" id="pMenuSub1">
@@ -217,6 +267,7 @@
 							<div class="panel-heading" id="personHeaderWardText"></div>
 								<div class="table-responsive">
 									<table class="table display" id='patientListTable'>
+										<tbody></tbody>
 									</table>
 								</div>
 						</div>					
@@ -258,21 +309,6 @@
 									</address>
 								</div>
 						</div>
-				<!--
-						<div class="panel panel-info col-sm-3" >
-						<div class="panel-heading">Summary</div>
-							<table class="table table-striped">
-								<tr><td class="active">Last Contact</td><td id="demTLastC"></td></tr>
-								<tr><td class="active">Contacts</td><td id="demTLContact"></td></tr>
-								<tr><td class="active">Vitals</td><td id="demTVitals"></td></tr>
-								<tr><td class="active">Problems</td><td id="demTProblems"></td></tr>
-								<tr><td class="active">Procedures</td><td id="demTProcedures"></td></tr>
-								<tr><td class="active">Orders</td><td id="demTOrders"></td></tr>
-								<tr><td class="active">Diagnoses</td><td id="demTDiagnoses"></td></tr>
-								<tr><td class="active">Allergies</td><td id="demTAllergies"></td></tr>
-							</table>
-						</div>
-				-->
 					</div>
 					<div class="panel-body" id="contactsPnl" style="display: none">
 						<div class="panel panel-info">
@@ -283,42 +319,58 @@
 								</div>
 						</div>					
 					</div>
+					<div class="panel-body" id="complaintsPnl" style="display: none">
+						<div class="panel panel-info">
+							<div class="panel-heading">Presenting Complaints</div>
+							<div class="scroll-x">
+								<div class="table-responsive">
+									<table class="table" id="complaintsTable">
+									</table>
+								</div>
+							</div>
+						</div>					
+					</div>
 					<div class="panel-body" id="diagnosisPnl" style="display: none">
 						<div class="panel panel-info">
 							<div class="panel-heading">Diagnoses</div>
+							<div class="scroll-x">							
 								<div class="table-responsive">
 									<table class="table">
-										<tr><th>Date</th><th>Date First Presented</th><th>Episode</th><th>Diagnosis Code</th><th>Diagnosis Description</th><th>Differential Diagnosis</th><th>Provider</th></tr>
-										<!-- Temporary canned data below will be replaced by Vista Data -->
-										<tr><td>5/11/2013</td><td>20/6/2013</td><td>Ongoing</td><td>ICD9-650245</td><td>Something medical</td><td></td><td>Dr. Chris</td></tr>
 									</table>
 								</div>
+							</div>
 						</div>					
 					</div>
 					<div class="panel-body" id="proceduresPnl" style="display: none">
 						<div class="panel panel-info">
 							<div class="panel-heading">Procedures</div>
+							<div class="scroll-x">
 								<div class="table-responsive">
 									<table class="table display" id="proceduresTable">
 									</table>
 								</div>
-						</div>					
+							</div>					
+						</div>
 					</div>
 					<div class="panel-body" id="investLabPnl" style="display: none">
 						<div class="panel panel-info">
 							<div class="panel-heading">Lab Tests</div>
-							<div class="table-responsive">
-								<table class="table display" id="investigationsTable">
-								</table>
+							<div class="scroll-x">
+								<div class="table-responsive">
+									<table class="table display" id="investigationsTable">
+									</table>
+								</div>
 							</div>
 						</div>
 					</div>
 					<div class="panel-body" id="investVitalPnl" style="display: none">
 						<div class="panel panel-info">
 							<div class="panel-heading">Vital Signs</div>
-							<div class="table-responsive">
-								<table class="table display" id="vitalsTable">
-								</table>
+							<div class="scroll-x">
+								<div class="table-responsive">
+									<table class="table display" id="vitalsTable">
+									</table>
+								</div>
 							</div>
 						</div>
 						
@@ -326,37 +378,48 @@
 					<div class="panel-body" id="problemsPnl" style="display: none">
 						<div class="panel panel-info">
 							<div class="panel-heading">Problems and Issues</div>
-								<div class="table-responsive">
-									<table class="table display" id="problemTable">
-									</table>
+								<div class="scroll-x">
+									<div class="table-responsive">
+										<table class="table display" id="problemTable">
+										</table>
+									</div>
 								</div>
 						</div>					
 					</div>
 					<div class="panel-body" id="medicationsPnl" style="display: none">
 						<div class="panel panel-info">
 							<div class="panel-heading">Medications</div>
+							<div class="scroll-x">
 								<div class="table-responsive">
 									<table class="table display" id="medicationsTable">
 									</table>
 								</div>
+							</div>
 						</div>					
 					</div>
 					<div class="panel-body" id="allergiesPnl" style="display: none">
 						<div class="panel panel-info">
 							<div class="panel-heading">Allergies</div>
+							<div class="scroll-x">
 								<div class="table-responsive">
 									<table class="table display" id="allergyTable">
 									</table>
 								</div>
 						</div>					
+							<div class="panel-footer">
+								<button href="#" id="newAllergyBtn" class="btn btn-primary">Add new Allergy</button>
+							</div>
+						</div>					
 					</div>
 					<div class="panel-body" id="alertsPnl" style="display: none">
 						<div class="panel panel-info">
 							<div class="panel-heading">System Alerts</div>
+							<div class="scroll-x">
 								<div class="table-responsive">
 									<table class="table display" id="alertsTable">
 									</table>
 								</div>
+							</div>
 						</div>					
 					</div>
 
