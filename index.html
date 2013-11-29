@@ -224,6 +224,9 @@
     <!-- Main body -->
     <div class="container-fluid">
 	  <div class="col-sm-2" id="menuHolder">
+	    <div >
+			<img class="img-responsive" src="/images/NHS_VISTA.jpg" </img>
+		</div>
 		<div  id="outerMenu">
             <ul class="nav nav-pills nav-stacked">
               <li id="oMenuTotalbyDept" class="active"><a href="#">Patients By Dept.</a></li>
@@ -252,7 +255,7 @@
               </li>							  
               <li id="pMenuMedications"><a href="#">Medications<span class="badge pull-right" id="pMenuMedicationsBadge"></span></a></li>
               <li id="pMenuAllergies"><a href="#">Allergies & Adverse Reactions<span class="badge pull-right" id="pMenuAllergiesBadge"></span></a></li>
-              <li id="pMenuAlerts"><a href="#">System Alerts<span class="badge pull-right" id="pMenuAlertsBadge"></span></a></li>
+         <!--     <li id="pMenuAlerts"><a href="#">System Alerts<span class="badge pull-right" id="pMenuAlertsBadge"></span></a></li> -->
               <li id="pMenuSafetyAlerts"><a href="#">Safety Alerts<span class="badge pull-right" id="pMenuSafetyAlertsBadge"></span></a></li>
             </ul>
         </div>
@@ -373,6 +376,9 @@
 									</table>
 								</div>
 							</div>
+							<div class="panel-footer">
+								<button href="#" id="graphVitalBtn" class="btn btn-primary" style="display: none" >Show on graph</button>
+							</div>
 						</div>
 						
 					</div>
@@ -432,6 +438,8 @@
 						<div class="table-responsive" id="detailPnl">
 						</div>
 					</div>
+				</div>
+				<div class="panel panel-primary col-sm-4" id="vitalGraphHolder" style="display: none; height: 600px;">
 				</div>
 			</div>
         </div>

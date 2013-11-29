@@ -28,20 +28,14 @@ module.exports = {
     var sessid = ewd.session.$('ewd_sessid')._value;
 	
     if (type === 'EWD.form.login') {
-      var error = ''; //skipping login for now while under development to save testing time
-      if (error === '') {
-        var name = 'Someone with a long name' ; //ewd.session.$('outputs').$('displayName')._value;
-        ewd.session.setAuthenticated();
-        ewd.sendWebSocketMsg({
-          type: 'loggedInAs',
-          message: {
-            fullName: name
-          }
-        });
-		nodeVista.getStats(params,ewd);
-		return;
-      }
-      return error;
+	    if (params.username === '') return 'You must enter a username';
+		if (params.password === '') return 'You must enter a password';
+		var error = nodeVista.userLogin(params,ewd);
+		if (error == '') {
+			nodeVista.getStats(params,ewd);
+			return;
+		}
+		return error;
     }
 	
 	//--------------- don't go past this point unless Authenticated -----------------------
@@ -57,7 +51,7 @@ module.exports = {
 		var reactions=ewd.session.$('symptoms')._setDocument();
 		
 		var inputs={
-			"userId" : '1', 
+			"userId" : ewd.session.$('userDUZ')._value, 
 			"patientId": params.patient,
 			"reactant": drugs[params.reactant],
 			"reactPntr": params.reactant,
@@ -96,11 +90,11 @@ module.exports = {
 		nodeVista.listVisits(params.patientId,ewd);
 		nodeVista.listVitals(params.patientId,ewd);
 		nodeVista.listProcedures(params.patientId,ewd);
-		nodeVista.listMedications(params.patientId,ewd);
 		nodeVista.listProblems(params.patientId,ewd);
 		nodeVista.listOrders(params.patientId,ewd);
-		nodeVista.listAlerts(params.patientId,ewd);
 		nodeVista.listAllergies(params.patientId,ewd);
+		nodeVista.listMedications(params.patientId,ewd);
+		//nodeVista.listAlerts(params.patientId,ewd);
 		//if (params.search) var patientName=ewd.session.$('names').$(params.patientId)._value;
         return ;
       }

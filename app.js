@@ -46,12 +46,19 @@ var swapPanel= function(pnl) {
 	return;
 };
 var showDetail = function() {
+	$('#vitalGraphHolder').hide();
 	$('#PersonInner').removeClass('col-sm-12').addClass('col-sm-8');
 	$('#detailHolder').show();
+};
+var showVitalGraph = function() {
+	hideDetail() ;
+	$('#PersonInner').removeClass('col-sm-12').addClass('col-sm-8');
+	$('#vitalGraphHolder').show();
 };
 var hideDetail = function() {
 	$('#PersonInner').removeClass('col-sm-8').addClass('col-sm-12');
 	$('#detailHolder').hide();
+	$('#vitalGraphHolder').hide();
 };
 	//take any Vista table format JSON object and make it a table
 dispJSON = function(jobj,debug) {
@@ -129,7 +136,7 @@ EWD.onSocketsReady = function() {
       document.getElementById('loginBtn').click();
     }
   });
-
+	//$('body').on('resize',function() {$('#graphHolder').resize(true);});
 
   // Login form button handler
   $('body').on( 'click', '#loginBtn', function(event) {
@@ -148,6 +155,10 @@ EWD.onSocketsReady = function() {
     $('#patientSelectionForm').modal('show');
     $('#patientSelectionFormBody').css("overflow-y","visible");
     if (EWD.application.topPanelActivated) $('#topPanel').collapse('hide');
+  });
+  $('#graphVitalBtn').click(function(e) {
+		e.preventDefault();
+		showVitalGraph();
   });
   $('#personHeaderCloseBtn').click(function(e) {
 	//alert('current: '+EWD.application.currentPanel+'   Previous: '+EWD.application.previousPanel);
@@ -349,7 +360,7 @@ EWD.onSocketMessage = function(messageObj) {
 			'bDestroy':true,
 			'aaData': aaData,
 			'aoColumns': [
-				{'sTitle':'Id'},{'sTitle':'Name'},{'sTitle':'Sex'},{'sTitle':'DOB'},{'sTitle':'SSN'}
+				{'sTitle':'Id'},{'sTitle':'Name'},{'sTitle':'Sex'},{'sTitle':'DOB'},{'sTitle':'NHS No'}
 			]
 		}).css('width','');
 		$(patientListTableDT.fnGetNodes()).click(function(e){
@@ -383,16 +394,104 @@ EWD.onSocketMessage = function(messageObj) {
 			$('#pMenuInvestigationsBadge').text(messageObj.message.length+t);
 		}
 		$('#pMenuInvestVitalBadge').text(messageObj.message.length||'');
-		//	console.log(JSON.stringify(messageObj));
+			//console.log(JSON.stringify(messageObj));
 		var vitalData=[];
+		vitalGraphData={};
 		var data=messageObj.message;
 		EWD.application.onePatient.vitals=data;
 		onePatient.vitals=data;
+		count={total:0};
 		for (var i=0;i<data.length;i++) {
 			var vital=data[i].GmrvVitalMeasurement;
+			var type=vital.VitalType.E;
+			var rate=vital.Rate.E;
 			//vitalData.push([vital.Date_timeVitalsEntered.E,vital.VitalType.E,vital.Rate.E,vital.EnteredBy.E]);
-			vitalData.push([vital.Date_timeVitalsEntered.E,vital.VitalType.E,vital.Rate.E]);
+			vitalData.push([vital.Date_timeVitalsEntered.E,type,rate]);
+			if (!count[type]) {count[type]=0;vitalGraphData[type]=[];}
+			count[type]=count[type]+1;
+			count['total']=count['total']+1 ;
+			var dtime=new Date(vital.Date_timeVitalsEntered.E).getTime();
+			if (type=="BLOOD PRESSURE") {
+				var b=rate.split('/');
+				var x=parseFloat(b[0]);
+				var y=parseFloat(b[1]);
+				vitalGraphData[type].push([dtime,x,y])
+			}
+			else {
+				vitalGraphData[type].push([dtime,rate])
+			};
 		}
+		if (count['total']>1) {
+			for (type in count) {
+				if (type != 'total') {
+					if (count[type] < 2) continue;
+					plotData=[];
+					for (plottype in vitalGraphData) {
+						if (vitalGraphData[plottype].length > 1) {
+							if (plottype=='BLOOD PRESSURE'){
+								plotData.push({label:plottype,data:vitalGraphData[plottype],hoverable:true, bandwidth:{show:true, lineWidth: "6px"}})
+							}
+							else {
+								plotData.push({label:plottype,data:vitalGraphData[plottype],hoverable:true, points:{show: true},lines: {show: true}})
+							}
+						}
+					}
+					VGplaceholder=$('#vitalGraphHolder')
+					var options={ xaxis: { mode: 'time' },yaxes:[{min:0}],selection:{mode:'xy'},series:{bandwidth:{active:true, lineWidth: 6}},grid:{hoverable:true}}
+					
+					VGplaceholder.bind("plotselected", function (event, ranges) {
+						var plot = $.plot(VGplaceholder, plotData, $.extend(true, {}, options, {
+							xaxis: {
+								min: ranges.xaxis.from,
+								max: ranges.xaxis.to
+							},
+							yaxis: {
+								min: ranges.yaxis.from,
+								max: ranges.yaxis.to
+							}
+						}));	
+					});
+					VGplaceholder.bind("plotunselected", function (event) {
+							$.plot(VGplaceholder, plotData, options);
+						});
+
+		$("<div id='Vitaltooltip'></div>").css({
+					position: "absolute",
+					display: "none",
+					border: "1px solid #fdd",
+					padding: "2px",
+					"background-color": "#fee",
+					opacity: 0.80
+				}).appendTo("body");
+
+		VGplaceholder.bind("plothover", function (event, pos, item) {
+			//if ($("#enableTooltip:checked").length > 0) {
+				if (item) {
+					//console.log('-----------------------------'+JSON.stringify(item));
+					var x = new Date(item.datapoint[0]).toLocaleString(), //.toFixed(2),
+						y = item.datapoint[1];
+						z='';
+						if (item.series.data[item.dataIndex][2]) z='/ '+item.series.data[item.dataIndex][2];
+						//item.datapoint[2];
+
+					$("#Vitaltooltip").html(item.series.label + " " + x + " = " + y + ' '+z)
+						.css({top: item.pageY+5, left: item.pageX+5})
+						.fadeIn(200);
+				} else {
+					$("#Vitaltooltip").hide();
+				}
+			//}
+		});
+					
+					$.plot(VGplaceholder, plotData,options);
+					$('#graphVitalBtn').show();
+					
+					
+					
+					break;
+				}
+			}
+		};
 		var vitalsTableDT=$('#vitalsTable').dataTable({
 			'bDestroy':true,
 			'aaData': vitalData,
@@ -823,7 +922,7 @@ EWD.onSocketMessage = function(messageObj) {
 			grid: {show:true, hoverable:true, clickable:true, autoHighlight:true}
 			};
 			var d=[{data:graphdata}];
-		$.plot($("#graphHolder"), d, options);
+		wardGraphPlot=$.plot($("#graphHolder"), d, options);
 		EWD.application.currentPanel='graphHolder';
 		$("#graphHolder").unbind();
 		$("#graphHolder").bind('plotclick',function(event,pos,item) {
@@ -858,7 +957,7 @@ EWD.onSocketMessage = function(messageObj) {
 			grid: {show:true, hoverable:true, clickable:true, autoHighlight:true}
 			};
 			var d=[{data:agegraphdata}];
-		$.plot($("#ageGraphHolder"), d, options);
+		var ageGraphPlot=$.plot($("#ageGraphHolder"), d, options);
 		$("#ageGraphHolder").hide();
 		//EWD.application.currentPanel='graphHolder';
 		$("#ageGraphHolder").unbind();

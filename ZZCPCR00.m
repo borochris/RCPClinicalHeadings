@@ -9,13 +9,14 @@ gets(z)	;generic call to GETS^DIQ
 	s ien=$g(inputs("recordId")) i 'ien q "no record Id supplied"
 	s fields=$g(inputs("fields")) i fields="" s fields="**" ;default is all fields,subfields and multiples
 	s flags=$g(inputs("flags")) i flags="" s flags="RNIE" ;default is internal, external, filednames, no null results
-	s ^cpc("g",fileNo)=1
+	s ^cpc("g",fileNo,1)=$h
 	s ienX=ien_","
 	s fileName=$$validName($p($G(^DIC(fileNo,0)),"^",1))
 	s outputs(fileName,"id")=ien
 	d GETS^DIQ(fileNo,ienX,fields,flags,"results")
 	d treeIt
 	m ^%zewdTemp($j,"outputs")=outputs
+	s ^cpc("g",fileNo,2)=$h
 	;i fileNo=55 m ^cpc($j)=outputs
 	q ""
 getPatientSummary(z)	;call to LIST^DIC
@@ -58,6 +59,45 @@ getPatientSummary(z)	;call to LIST^DIC
 	m ^%zewdTemp($j,"outputs")=outputs
 	s ^cpc("gps")=2
 	Q ""
+login(z)
+ n %,accessCode,accver,DILOCKTM,displayPersonName,DISYS,%DT,DT,DTIME,DUZ,%H
+ n checkRes,%I,I,IO,IOF,IOM,ION,IOS,IOSL,IOST,IOT,J,ok,personDuz,personName
+ n POP,results,supervisor,termReason,U,user,V4WVCC,V4WCVMSG
+ n X,XOPT,XPARSYS,XQVOL,XQXFLG,XUCI,XUDEV,XUENV,XUEOFF,XUEON
+ n XUF,XUFAC,XUIOP,XUVOL,XWBSTATE,XWBTIME,Y,verifyCode
+ m inputs=^%zewdTemp($j,"inputs")
+ s accessCode=$g(inputs("username")) i accessCode="" q "Missing account ID"
+ s verifyCode=$g(inputs("password")) i verifyCode="" q "Missing account password"
+ ;
+ k results
+ s U="^" d NOW^%DTC s DT=X
+ s (IO,IO(0),IOF,IOM,ION,IOS,IOSL,IOST,IOT)="",POP=0
+ s accver=accessCode_";"_verifyCode
+ s accver=$$ENCRYP^XUSRB1(accver)
+ d SETUP^XUSRB()
+ d VALIDAV^XUSRB(.user,accver)
+ s personDuz=user(0)
+ ;
+ ;KBAZ/ZAG - add logic to check if verify code needs to be changed.
+ ;0 = VC does not need to be changed
+ ;1 = VC needs to be changed
+ s V4WVCC=$g(user(2))
+ s V4WCVMSG=$g(user(3)) ;sign in message
+ ;
+ s termReason=""
+ i 'personDuz,$G(DUZ) s termReason=": "_$$GET1^DIQ(200,DUZ_",",9.4) ;Termination reason
+ i 'personDuz QUIT user(3)_termReason
+ ;
+ s personName=$p(^VA(200,personDuz,0),"^")
+ s displayPersonName=$p(personName,",",2)_" "_$p(personName,",")
+ s results("DT")=DT
+ s results("DUZ")=personDuz
+ s results("username")=personName
+ s results("displayName")=displayPersonName
+ s results("greeting")=$g(user(7))
+ m ^%zewdTemp($j,"outputs")=results
+ QUIT ""
+ ;
 orig	;
 	s fn="" f  s fn=$o(results(fn)) q:fn=""  d
 	. i fn'=fileNo s sfName=$p($g(^DD(fn,0)),"^",1) s:$L(sfName," SUB-FIELD")>1 sfName=$p(sfName," SUB-FIELD",1) S sfName=$$validName(sfName)

@@ -17,7 +17,25 @@
 */
 
 module.exports = {
-
+	userLogin: function(params,ewd) {
+		var authP=new ewd.mumps.GlobalNode("%zewdTemp",[process.pid]);
+		authP._delete();
+		authP._setDocument({'inputs':{'password':params.password,'username':params.username}});
+		var result=ewd.mumps.function('login^ZZCPCR00','xx');
+		if (result != '') return result;
+		var document=authP._getDocument();
+		ewd.session.$('username')._value = params.username;
+		ewd.session.$('userDUZ')._value = document.outputs.DUZ;
+		ewd.session.$('displayName')._value = document.outputs.displayName;
+		ewd.session.setAuthenticated();
+		ewd.sendWebSocketMsg({
+			type: 'loggedInAs',
+			message: {
+			  fullName: document.outputs.displayName
+			}
+		});
+		return '';
+	},
 
 	simplePatientLookup : function(params,ewd) {
       if (!patientIndex) var patientIndex = new ewd.mumps.GlobalNode("DPT", ["B"]);
@@ -242,9 +260,16 @@ module.exports = {
 		var vitalsX= new ewd.mumps.GlobalNode("PXRMINDX", [120.5,"PI",patientId]);
 		var vitals=[];
 		var vitalsList= vitalsX._getDocument();
-		for (ien in vitalsList) {
-			vitals.push(this.getVital(patientId,ien,ewd));
+		for (type in vitalsList) {
+			for (date in vitalsList[type]) {
+				for (ien in vitalsList[type][date]) {
+					vitals.push(this.getVital(patientId,ien,ewd))
+				}
+			}
 		};
+	//	for (ien in vitalsList) {
+	//		vitals.push(this.getVital(patientId,ien,ewd));
+	//	};
 		ewd.sendWebSocketMsg({
 			type:'vitalCount',
 			message :vitals
