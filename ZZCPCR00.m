@@ -22,7 +22,7 @@ gets(z)	;generic call to GETS^DIQ
 getPatientSummary(z)	;call to LIST^DIC
 	;?MAKE THIS GENERIC OR SPECIFIC
 	;Do spefic to this call for now
-	s ^cpc("gps")=1
+	;s ^cpc("gps")=1
 	n errors,results,outputs,DILOCKTM,DISYS,DT,DTIME,DUZ,IO,O,U
 	D LIST^DIC(2,"",".01;.02;.033;.03IE;.1;.09","Q","","","","CN","","","results","errors")
 	;results("DILIST",2,10)=24
@@ -114,7 +114,23 @@ orig	;
 treeIt
 	n count,fileno,parent,parentName,previous,reversetxt,subfiletxt,treeIndex,treeout,tree
 	k treeout
+	;i fileNo=55 M ^cpc("results")=results
 	s fileno="" f  s fileno=$o(results(fileno)) q:fileno=""  d
+	. i fileno=55.09 s ^cpc(55)=9 q  ;special performance fix for meds - ignore acivity log
+	. i fileno=55.03 s ^cpc(55)=4 q  ;special performance fix for meds - prescription profile
+	. i fileno=55.04 s ^cpc(55)=4 q  ;special performance fix for meds - ignore acivity log
+	. i fileno=55.0105 s ^cpc(55)=4 q  ;special performance fix for meds - ignore BCMA
+	. i fileno=55.1057 s ^cpc(55)=4 q  ;special performance fix for meds - ignore acivity log
+	. i fileno=55.1058 s ^cpc(55)=4 q  ;special performance fix for meds - ignore acivity log
+	. i fileno=55.1111 s ^cpc(55)=4 q  ;special performance fix for meds - ignore acivity log
+	. i fileno=55.0611 s ^cpc(55)=4 q  ;special performance fix for meds - ignore acivity log
+	. i fileno=100.09 q
+	. i fileno=100.0085 q
+	. i fileno=100.045  q  ;special performance fix for 
+	. i fileno=100.0451  q  ;special performance fix for 
+	. i fileno=100.008  q  ;special performance fix for 
+	. i fileno=100.0081  q  ;special performance fix for 
+	. i fileno=100.0082  q  ;special performance fix for 
 	. s subfiletxt="" f  s subfiletxt=$o(results(fileno,subfiletxt)) q:subfiletxt=""  D
 	.. s reversetxt=$$reverse(subfiletxt)
 	.. m treeout(reversetxt,fileno)=results(fileno,subfiletxt)
@@ -135,6 +151,7 @@ treeIt
 	. ;q:parent=","
 	. m tree(parent,parentName,treeIndex(sfIen))=tree(sfIen)
 	. k tree(sfIen)
+	;i fileNo=55 m ^cpc("tree")=tree(ienX)
 	m outputs(fileName)=tree(ienX)
 	;k trIn
 	;m trIn=treeout
@@ -166,7 +183,7 @@ validName(in)
 	q out
 wrapNewAllergy(z)
 	m inputs=^%zewdTemp($j,"inputs")
-	m ^cpc("d")=inputs
+	;m ^cpc("d")=inputs
 	s ok=$$newAllergy^ZZCPCR00(.inputs,.outputs)
 	m ^%zewdTemp($j,"outputs")=outputs
 	q ok

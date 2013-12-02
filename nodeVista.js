@@ -209,6 +209,55 @@ module.exports = {
 		var patientObj=patientRec0.split('^');
 		return {id:patientId,name:patientObj[0],sex:patientObj[1],DOB:this.convertFtoStringDate(patientObj[2]),SSN:patientObj[8]}
 	},
+	
+	listPics: function(patientId,ewd) {
+		var picsP = new ewd.mumps.GlobalNode("MAG", [2005,"AC", patientId]);
+		var pics=[];
+		var picsInx={
+			4:{34:4,38:71,40:51,41:52},
+			22:{54:80,55:80,56:110,59:82,60:82,65:81,66:81}
+		}
+		var picsList=picsP._getDocument();
+		for (ien in picsList) {
+			var thisPicP = new ewd.mumps.GlobalNode("MAG", [2005,ien])
+			var thisPic=thisPicP._getDocument();
+			//var pic0=thisPic[0]._value;
+			//var pic2=thisPic[2]._value;
+			var pic0=thisPic[0].split("^");
+			var pic2=thisPic[2].split("^");
+			if (pic0[1]=='') continue; //ignore if no file in record
+			var procX=''; if (picsInx[patientId]) if (picsInx[patientId][ien]) procX=picsInx[patientId][ien];
+			pics.push({file:pic0[1],type:pic0[5],proc:pic0[7],description:pic2[3], procedure:procX});
+		};
+		ewd.sendWebSocketMsg({
+			type:'pictures',
+			message: pics
+		})
+		return;
+	},
+	//^DGPF(26.13,"B",19,*)
+	listSafeties: function(patientId, ewd) {
+		var safetyIxP = new ewd.mumps.GlobalNode("DGPF", [26.13,"B",patientId]);
+		var safetyAlerts=[];
+		var safetyList=safetyIxP._getDocument();
+		for (ien in safetyList) {
+			safetyAlerts.push(this.getSafety(patientId,ien,ewd));
+		};
+		ewd.sendWebSocketMsg({
+			type: 'safetyAlerts',
+			message: safetyAlerts
+		});
+	},
+	getSafety: function(patientId,safetyId,ewd) {
+		var safetyRes = new ewd.mumps.GlobalNode("%zewdTemp", [process.pid]);
+		safetyRes._delete();
+		safetyRes._setDocument({'inputs':{'fileNo':26.13, 'patientId':patientId, 'recordId':safetyId}});
+		var result=ewd.mumps.function('gets^ZZCPCR00','xx');
+		var document=safetyRes._getDocument();
+		safetyRes._delete();
+		//console.log(JSON.stringify(document.outputs));
+		return document.outputs;	
+	},
 	listComplaints: function(patientId,ewd) {
 		var complaintsP = new ewd.mumps.GlobalNode("AUPNVNT", ["AC",patientId]);
 		var complaints=[];
@@ -255,7 +304,6 @@ module.exports = {
 		//console.log(JSON.stringify(document.outputs));
 		return document.outputs;
 	},	
-	
 	listVitals: function(patientId,ewd) {
 		var vitalsX= new ewd.mumps.GlobalNode("PXRMINDX", [120.5,"PI",patientId]);
 		var vitals=[];

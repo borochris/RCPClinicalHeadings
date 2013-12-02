@@ -84,8 +84,9 @@ module.exports = {
           type: 'getPatientSummary',
           message: {}
         });
-
+		nodeVista.listPics(params.patientId,ewd);
 		nodeVista.getDemographics(params.patientId,ewd);
+		nodeVista.listSafeties(params.patientId,ewd);
 		nodeVista.listComplaints(params.patientId,ewd);
 		nodeVista.listVisits(params.patientId,ewd);
 		nodeVista.listVitals(params.patientId,ewd);

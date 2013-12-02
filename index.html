@@ -18,6 +18,9 @@
 -->
 <html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
   <head>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
 
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-touch-fullscreen" content="yes" />
@@ -256,14 +259,18 @@
               <li id="pMenuMedications"><a href="#">Medications<span class="badge pull-right" id="pMenuMedicationsBadge"></span></a></li>
               <li id="pMenuAllergies"><a href="#">Allergies & Adverse Reactions<span class="badge pull-right" id="pMenuAllergiesBadge"></span></a></li>
          <!--     <li id="pMenuAlerts"><a href="#">System Alerts<span class="badge pull-right" id="pMenuAlertsBadge"></span></a></li> -->
-              <li id="pMenuSafetyAlerts"><a href="#">Safety Alerts<span class="badge pull-right" id="pMenuSafetyAlertsBadge"></span></a></li>
+              <li id="pMenuSafetyAlerts"  ><a href="#">Safety Alerts<span class="badge pull-right" id="pMenuSafetyAlertsBadge"></span></a></li>
+              <li id="pMenuPlans" class="disabled"><a href="#">Plans & Requested Actions<span class="badge pull-right" id="pMenuPlansBadge"></span></a></li>
+
             </ul>
         </div>
 	  </div>
         <div id="summaryPage" class="collapse in col-sm-10">
 		<!-- graph view -->
-			<div class="container-fluid" id="graphHolder" style="height: 600px;"></div>
-			<div class="container-fluid" id="ageGraphHolder" style="height: 600px; "></div>
+		<!--  <div class="container-fluid col-sm-12"> -->
+			<div class="panel panel-primary" id="graphHolder" style="height: 600px;"></div>
+			<div class="panel panel-primary" id="ageGraphHolder" style="height: 600px; "></div>
+		<!--  </div> -->
 		<!-- list view -->
 			<div class="container-fluid" id="listHolder" style="display: none">
 				<div class="panel-body" id="patientListPnl" style="display: none">
@@ -307,6 +314,7 @@
 								<div class="panel col-sm-3" >
 									<address id="demTAdd">
 									</address>
+									<img class="img-responsive" id='patientPicture' style="display: none" src="" > </img>
 								</div>
 								<div class="panel col-sm-3" >
 									<address id="demTAdd2">
@@ -418,6 +426,18 @@
 							</div>
 						</div>					
 					</div>
+					<div class="panel-body" id="safetyAlertsPnl" style="display: none">
+						<div class="panel panel-info">
+							<div class="panel-heading">Safety Alerts</div>
+							<div class="scroll-x">
+								<div class="table-responsive">
+									<table class="table display" id="safetyAlertsTable">
+									</table>
+								</div>
+							</div>
+						</div>					
+					</div>
+
 					<div class="panel-body" id="alertsPnl" style="display: none">
 						<div class="panel panel-info">
 							<div class="panel-heading">System Alerts</div>
@@ -451,16 +471,16 @@
     <script src="/bootstrap-3.0.0/dist/js/bootstrap.js"></script>
 
     <script src="/ewdLite/EWD.js"></script>
-    <script type="text/javascript" src="/ewd/VistaRCP/app.js"></script>
+    <script type="text/javascript" src="/ewd/VistaRCP/app.js?v=0.12"></script>
 	<script type="text/javascript" src="/toastr/toastr.js"></script>
 	<script type="text/javascript" src="/select2/select2.js"></script>
+	<script type="text/javascript" src="/dataTables/jquery.dataTables.js"></script>
 	<script type="text/javascript" src="/flot/jquery.flot.js"></script>
 	<script type="text/javascript" src="/flot/jquery.flot.time.js"></script>
 	<script type="text/javascript" src="/flot/jumflot-min.js"></script>
-	<script type="text/javascript" src="/flot/jquery.flot.resize.js"></script>
-	<script type="text/javascript" src="/flot/jquery.flot.selection.js"></script>
 	<script type="text/javascript" src="/flot/jquery.flot.categories.js"></script>
-	<script type="text/javascript" src="/dataTables/jquery.dataTables.js"></script>
+	<script type="text/javascript" src="/flot/jquery.flot.selection.js"></script>
+	<script type="text/javascript" src="/flot/jquery.flot.resize.js"></script>
 
     <!--  =======================================  -->
   </body>
