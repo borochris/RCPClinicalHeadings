@@ -32,9 +32,9 @@ var convertFtoStringDateUS= function(x) {
 	return x
 	}
 var onePatient = {};
-$(document).ready(function() {
-  EWD.isReady();
-});
+//$(document).ready(function() {
+//  EWD.isReady();
+// });
 var swapPanel= function(pnl) {
 	console.log('swapping to '+pnl);
 	var oldp=$('#'+EWD.application.currentPanel)
@@ -795,6 +795,10 @@ EWD.onSocketMessage = function(messageObj) {
 		var medicationData=[];
 		var basicRecord={};
 		medicineRecords=[];
+		if (messageObj.message.length == 0) {
+			$('#pMenuMedications').removeClass('disabled');
+			return;
+		}
 		var m=messageObj.message[0].PharmacyPatient;
 		/* Don't include Header Record
 		for (var i in m) {

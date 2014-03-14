@@ -1,7 +1,6 @@
-ZZCPCR00	;;node functions in vista
+ZZCPCR00	;;node functions in vista;;v 0.3
 	;
 gets(z)	;generic call to GETS^DIQ
-	s ^cpc("g")=1
 	n fieldName,fileName,fileNo,fields,fln,fn,ien,ienX,inputs,outputs,results,sf,sfCount,sfIen,sfLvl,sfName
 	m inputs=^%zewdTemp($j,"inputs")
 	k results
@@ -9,20 +8,16 @@ gets(z)	;generic call to GETS^DIQ
 	s ien=$g(inputs("recordId")) i 'ien q "no record Id supplied"
 	s fields=$g(inputs("fields")) i fields="" s fields="**" ;default is all fields,subfields and multiples
 	s flags=$g(inputs("flags")) i flags="" s flags="RNIE" ;default is internal, external, filednames, no null results
-	s ^cpc("g",fileNo,1)=$h
 	s ienX=ien_","
 	s fileName=$$validName($p($G(^DIC(fileNo,0)),"^",1))
 	s outputs(fileName,"id")=ien
 	d GETS^DIQ(fileNo,ienX,fields,flags,"results")
 	d treeIt
 	m ^%zewdTemp($j,"outputs")=outputs
-	s ^cpc("g",fileNo,2)=$h
-	;i fileNo=55 m ^cpc($j)=outputs
 	q ""
 getPatientSummary(z)	;call to LIST^DIC
 	;?MAKE THIS GENERIC OR SPECIFIC
 	;Do spefic to this call for now
-	;s ^cpc("gps")=1
 	n errors,results,outputs,DILOCKTM,DISYS,DT,DTIME,DUZ,IO,O,U
 	D LIST^DIC(2,"",".01;.02;.033;.03IE;.1;.09","Q","","","","CN","","","results","errors")
 	;results("DILIST",2,10)=24
@@ -57,7 +52,6 @@ getPatientSummary(z)	;call to LIST^DIC
 	. s outputs("ages",ageR,"patients",ien)=ien
 	. s c=c+1
 	m ^%zewdTemp($j,"outputs")=outputs
-	s ^cpc("gps")=2
 	Q ""
 login(z)
  n %,accessCode,accver,DILOCKTM,displayPersonName,DISYS,%DT,DT,DTIME,DUZ,%H
@@ -107,23 +101,20 @@ orig	;
 	... m outputs(fileName,sfName,sfCount,$$validName(fieldName))=results(fn,sfIen,fieldName)
 	.. i fn'=fileNo s sfCount=sfCount+1
 	m ^%zewdTemp($j,"outputs")=outputs
-	s ^cpc("g")=2
-	s ^cpc("g",fileNo)=2
 	q ""
 
 treeIt
 	n count,fileno,parent,parentName,previous,reversetxt,subfiletxt,treeIndex,treeout,tree
 	k treeout
-	;i fileNo=55 M ^cpc("results")=results
 	s fileno="" f  s fileno=$o(results(fileno)) q:fileno=""  d
-	. i fileno=55.09 s ^cpc(55)=9 q  ;special performance fix for meds - ignore acivity log
-	. i fileno=55.03 s ^cpc(55)=4 q  ;special performance fix for meds - prescription profile
-	. i fileno=55.04 s ^cpc(55)=4 q  ;special performance fix for meds - ignore acivity log
-	. i fileno=55.0105 s ^cpc(55)=4 q  ;special performance fix for meds - ignore BCMA
-	. i fileno=55.1057 s ^cpc(55)=4 q  ;special performance fix for meds - ignore acivity log
-	. i fileno=55.1058 s ^cpc(55)=4 q  ;special performance fix for meds - ignore acivity log
-	. i fileno=55.1111 s ^cpc(55)=4 q  ;special performance fix for meds - ignore acivity log
-	. i fileno=55.0611 s ^cpc(55)=4 q  ;special performance fix for meds - ignore acivity log
+	. i fileno=55.09 q  ;special performance fix for meds - ignore acivity log
+	. i fileno=55.03 q  ;special performance fix for meds - prescription profile
+	. i fileno=55.04 q  ;special performance fix for meds - ignore acivity log
+	. i fileno=55.0105 q  ;special performance fix for meds - ignore BCMA
+	. i fileno=55.1057 q  ;special performance fix for meds - ignore acivity log
+	. i fileno=55.1058 q  ;special performance fix for meds - ignore acivity log
+	. i fileno=55.1111 q  ;special performance fix for meds - ignore acivity log
+	. i fileno=55.0611 q  ;special performance fix for meds - ignore acivity log
 	. i fileno=100.09 q
 	. i fileno=100.0085 q
 	. i fileno=100.045  q  ;special performance fix for 
@@ -139,8 +130,9 @@ treeIt
 	. s parent=$p(sfIen,",",1,($l(sfIen,",")-2))_","
 	. i $l(sfIen,",")'=$l(previous) s count=0 s previous=sfIen
 	. s fn="" f  s fn=$o(treeout(sfIen,fn)) q:fn=""  d
-	..  i fn'=fileNo s sfName=$p($g(^DD(fn,0)),"^",1) s:$L(sfName," SUB-FIELD")>1 sfName=$p(sfName," SUB-FIELD",1) S sfName=$$validName(sfName)
-	..   s count=$o(tree(parent,sfName,""),-1) s:count'="" count=count+1 s:count="" count=0
+	..  i fn'=fileNo d
+	...   s sfName=$p($g(^DD(fn,0)),"^",1) s:$L(sfName," SUB-FIELD")>1 sfName=$p(sfName," SUB-FIELD",1) S sfName=$$validName(sfName)
+	...   s count=$o(tree(parent,sfName,""),-1) s:count'="" count=count+1 s:count="" count=0
 	..  s fieldName="" f  s fieldName=$o(treeout(sfIen,fn,fieldName)) q:fieldName=""  d
 	...   i fn=fileNo m outputs(fileName,$$validName(fieldName))=treeout(sfIen,fn,fieldName) q
 	...   m tree(parent,sfName,count,$$validName(fieldName))=treeout(sfIen,fn,fieldName)
@@ -151,7 +143,6 @@ treeIt
 	. ;q:parent=","
 	. m tree(parent,parentName,treeIndex(sfIen))=tree(sfIen)
 	. k tree(sfIen)
-	;i fileNo=55 m ^cpc("tree")=tree(ienX)
 	m outputs(fileName)=tree(ienX)
 	;k trIn
 	;m trIn=treeout
@@ -169,9 +160,77 @@ field(file,fileien,out,flag)	;
 	q
 wrapGetDemographics(z)
 	m inputs=^%zewdTemp($j,"inputs")
-	s ok=$$getDemographics^JJOHSCRP(.inputs,.results)
+	s ok=$$getDemographics^ZZCPCR00(.inputs,.results)
 	m ^%zewdTemp($j,"outputs")=results
 	q ok
+getDemographics(inputs,results)
+	;based on RMPR9DEM
+	N %,%H,DFN,DILOCKTM,DISYS,DT,DTIME,DUZ,IO,U,VA,VADM,VAERR,VACNTRY,VAPA,VAOA,VAEL,VAMB
+	S DFN=$g(inputs("DFN"))
+	k results
+	D DEM^VADPT
+	s results("localPid")=DFN
+	S results("name")=VADM(1) ;Name
+	S results("ssn")=$p(VADM(2),"^",2) ;SSN
+	S results("ssnCode")=$p(VADM(2),"^",1) ;SSN
+	I $l(VADM(2),"^")=1 s results("ssnCode")=$p($g(^DPT(DFN,0)),"^",9) ;cpc 3/6/2013 need real SSN for matching
+	S results("dob")=$p(VADM(3),"^",2) ;Date of Birth
+	S results("dobCode")=$p(VADM(3),"^",1) ;Date of Birth
+	S results("age")=VADM(4) ;Age
+	i $p($g(VADM(250000)),"^",1)'="" S results("age")=$p(VADM(250000),"^",1) ;Age including months
+	S results("medicalRecordNo")=+VA("PID") ;Medical Record Number
+	;
+	S results("language")=$$GET1^DIQ(2,DFN_",","256000","E") ;
+	s results("email")=$$GET1^DIQ(2,DFN_",","133","E") ;cpc 23/4/2013
+	;
+	S results("gender")=$p(VADM(5),"^",2) ;Sex
+	S results("genderCode")=$p(VADM(5),"^",1) ;Sex
+	S results("deceasedDate")=$p(VADM(6),"^",2) ;Date of Death
+	S results("deceasedDateCode")=$p(VADM(6),"^",1) ;Date of Death
+	S results("race")=$p(VADM(8),"^",2) ;Race
+	S results("raceCode")=$p(VADM(8),"^",1) ;Race
+	S results("religion")=$p(VADM(9),"^",2) ;Religion
+	S results("religionCode")=$p(VADM(9),"^",1) ;Religion
+	S results("maritalStatus")=$p(VADM(10),"^",2) ;Marital Status
+	S results("maritalStatusCode")=$p(VADM(10),"^",1) ;Marital Status
+	s results("ethnicity")=$p($g(VADM(11,1)),"^",2)
+	s results("ethnicityCode")=$p($g(VADM(11,1)),"^",1)
+	S results("PLID")=VA("PID") ;Primary Long ID
+	S results("PSID")=VA("BID") ;Primary Short ID
+	D ADD^VADPT
+	S results("Addr1")=VAPA(1) ;First line address
+	S results("Addrcity")=VAPA(4) ;City
+	S results("Addrstate")=$p(VAPA(5),"^",2) ;State
+	S results("AddrstateCode")=$p(VAPA(5),"^",1) ;State
+	S results("Addrzipcode")=VAPA(6) ;Zip
+	S results("Addrcounty")=$p(VAPA(7),"^",2) ;County
+	S results("AddrcountyCode")=$p(VAPA(7),"^",1) ;County
+	S results("Addrphone")=VAPA(8) ;Phone
+	S results("AddrZIP4")=VAPA(11) ;Zip+4
+	D OAD^VADPT
+	S results("NOK")=VAOA(9) ;NOK name
+	S results("NOKaddr1")=VAOA(1) ;NOK Address
+	S results("NOKcity")=VAOA(4) ;NOK CITY
+	S results("NOKstate")=$p(VAOA(5),"^",2) ;NOK STATE
+	S results("NOKstateCode")=$p(VAOA(5),"^",1) ;NOK STATE
+	S results("NOKzipcode")=VAOA(6) ;NOK ZIP
+	s results("NOKcounty")=$P(VAOA(7),"^",2)
+	s results("NOKcountyCode")=$P(VAOA(7),"^",1)
+	S results("NOHphone")=VAOA(8) ;NOK PHONE
+	S results("NOKrelate")=VAOA(10) ;NOK RELATIONSHIP
+	D ELIG^VADPT
+	S results("EligClaimNo")=VAEL(7) ;Claim #
+	S results("EligPatType")=$P(VAEL(6),U,2) ;Patient Type
+	S results("EligPerServ")=$P(VAEL(2),U,2) ;Period of Service
+	S results("EligPrimEligCode")=$P(VAEL(1),U,2) ;Primary Eligibility Code
+	S results("EligVerified")=$S(VAEL(8)]"":$P(VAEL(8),U,2),1:"NOT VERIFIED") ;Verification?
+	D MB^VADPT
+	S results("MB1")="NO" I $P(VAMB(1),U)=1 S results(30)="YES",RMPRCHK=$P(VAMB(1),U,2)
+	S results("MB2")="NO" I $P(VAMB(2),U)=1 S results(31)="YES",RMPRCHK=$P(VAMB(2),U,2)
+	S results("MB3")="NO" I $P(VAMB(4),U)=1 S results(32)="YES",RMPRCHK=$P(VAMB(4),U,2)
+	S results("MB4")="NO" I $P(VAMB(7),U)=1 S results(33)="YES",RMPRCHK=$P(VAMB(7),U,2)
+	S results("MB0")=0 I $G(RMPRCHK)]"" S results(34)=$G(RMPRCHK) ;Total Annual VA Check Amount
+ q ""
 validName(in)
 	n i,up,low,othIn,othOut,out
 	s up="ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -183,13 +242,11 @@ validName(in)
 	q out
 wrapNewAllergy(z)
 	m inputs=^%zewdTemp($j,"inputs")
-	;m ^cpc("d")=inputs
 	s ok=$$newAllergy^ZZCPCR00(.inputs,.outputs)
 	m ^%zewdTemp($j,"outputs")=outputs
 	q ok
 newAllergy(inputs,outputs) ;function to create a new patient allergy entry
 	n %,%I,%H,comdel,commref,comments,COUNT,DFN,DILOCKTM,DISYS,DT,DTIME,IO,U,X,now,DUZ,ERRORS,FDA,IEN,reactant,reactantPntr,observeOrHist,other,text
-	;s ^cpc("a")=1
 	S DUZ=$G(inputs("userId")) i 'DUZ Q "User not supplied"
 	S DFN=$G(inputs("patientId")) i 'DFN Q "Patient not supplied"
 	s reactant=$g(inputs("reactant")) i reactant="" q "reaction mandatory"
@@ -202,7 +259,6 @@ newAllergy(inputs,outputs) ;function to create a new patient allergy entry
 	;i comments m other=inputs("comments")
 	s comDel="\u000a"
 	d NOW^%DTC s DT=X,now=%
-	;s ^cpc("a")=2.0
 	;s other=1,other(1)=133
 	;s comments=1,comments(1,"date")=DT,comments(1,"text",1)="some text Comment",comments(1,"text",2)="split over two lines"
 	S FDA(120.8,"+1,",.01)=DFN
@@ -211,12 +267,10 @@ newAllergy(inputs,outputs) ;function to create a new patient allergy entry
 	s FDA(120.8,"+1,",4)=DT
 	s FDA(120.8,"+1,",5)=DUZ
 	s FDA(120.8,"+1,",6)=observeOrHist
-	;s ^cpc("a")=2.1
 	I +$g(other) f count=1:1:$l(other,",") d
 	. s FDA(120.81,"+"_(count+1)_",+1,",.01)=$p(other,",",count)
 	. s FDA(120.81,"+"_(count+1)_",+1,",2)=DUZ
 	. s FDA(120.81,"+"_(count+1)_",+1,",3)=DT
-	;s ^cpc("a")=2.2
 	k text
 	I comments'="" d
 	. f count=1:1:$l(comments,comDel) s text(1,count)=$p(comments,comDel,count)
@@ -224,10 +278,7 @@ newAllergy(inputs,outputs) ;function to create a new patient allergy entry
 	. s FDA(120.826,"+"_(+20)_",+1,",.01)=DT
 	. s FDA(120.826,"+"_(+20)_",+1,",1)=DUZ
 	. s FDA(120.826,"+"_(+20)_",+1,",2)=commRef
-	;s ^cpc("a")=3
 	D UPDATE^DIE("S","FDA","IEN","ERRORS")
-	;s ^cpc("a")=4
 	i $d(ERRORS) m outputs("ERRORS")=ERRORS Q ERRORS("DIERR",1,"TEXT",1)
-	s ^cpc("a")=5
 	m outputs=IEN
 	q ""
