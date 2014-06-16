@@ -10,12 +10,12 @@ Installation
 Files follow standard EWD layout on a DEWdrop machine.
 the paths below may require minor changes on other builds
 
-index.html    -->>  /home/vista/ewdjs/www/VistaRCP
-app.js        -->>  /home/vista/ewdjs/www/VistaRCP
-nodeVista.js  -->>  /home/vista/ewdjs/node_modules
-VistaRCP.js   -->>  /home/vista/ewdjs/node_modules
-ZZCPCR00.m    -->>  /p on gt.m install or %RR on Cache
-NHS_VISTA.jpg -->>  /home/vista/extjs/www/images
+	index.html    -->>  /home/vista/ewdjs/www/VistaRCP
+	app.js        -->>  /home/vista/ewdjs/www/VistaRCP
+	nodeVista.js  -->>  /home/vista/ewdjs/node_modules
+	VistaRCP.js   -->>  /home/vista/ewdjs/node_modules
+	ZZCPCR00.m    -->>  /p on gt.m install or %RR on Cache
+	NHS_VISTA.jpg -->>  /home/vista/extjs/www/images
 
 Licence
 =======
