@@ -1,12 +1,21 @@
 RCP Clinical Headings
-
+=====================
 RCP Clinical Headings is an Open Source demonstrator of the RCP Clinical Headings on top of a Vista EHR
 This is currently very much work in progress and will be updated as the work progresses.
 
-Version 0.1
+Version 0.2
+
+Installation
+============
+Files follow standard EWD layout
+index.html    -->>  /home/vista/ewdjs/www/VistaRCP
+app.js        -->>  /home/vista/ewdjs/www/VistaRCP
+nodeVista.js  -->>  /home/vista/ewdjs/node_modules
+VistaRCP.js   -->>  /home/vista/ewdjs/node_modules
+ZZCPCR00.m    -->>  /p on gt.m install or %RR on Cache
 
 Licence
-
+=======
 Copyright (c) 2013 CPC Computer solutions Ltd. All rights reserved.
 This program is free software and is licensed under Apache2 license as described below.
 
