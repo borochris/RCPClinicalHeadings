@@ -1,0 +1,594 @@
+KIDS Distribution saved on Jun 18, 2014@06:50:39
+Initial release of hand tremors
+**KIDS**:KBBX 1.0^
+
+**INSTALL NAME**
+KBBX 1.0
+"BLD",9252,0)
+KBBX 1.0^^0^3140618^n
+"BLD",9252,4,0)
+^9.64PA^11346000^1
+"BLD",9252,4,11346000,0)
+11346000
+"BLD",9252,4,11346000,222)
+y^y^f^^^^n
+"BLD",9252,4,"B",11346000,11346000)
+
+"BLD",9252,6.3)
+1
+"BLD",9252,"KRN",0)
+^9.67PA^779.2^20
+"BLD",9252,"KRN",.4,0)
+.4
+"BLD",9252,"KRN",.401,0)
+.401
+"BLD",9252,"KRN",.402,0)
+.402
+"BLD",9252,"KRN",.403,0)
+.403
+"BLD",9252,"KRN",.5,0)
+.5
+"BLD",9252,"KRN",.84,0)
+.84
+"BLD",9252,"KRN",3.6,0)
+3.6
+"BLD",9252,"KRN",3.8,0)
+3.8
+"BLD",9252,"KRN",9.2,0)
+9.2
+"BLD",9252,"KRN",9.8,0)
+9.8
+"BLD",9252,"KRN",9.8,"NM",0)
+^9.68A^1^1
+"BLD",9252,"KRN",9.8,"NM",1,0)
+KBBXHTR0^^0^B3160
+"BLD",9252,"KRN",9.8,"NM","B","KBBXHTR0",1)
+
+"BLD",9252,"KRN",19,0)
+19
+"BLD",9252,"KRN",19.1,0)
+19.1
+"BLD",9252,"KRN",101,0)
+101
+"BLD",9252,"KRN",409.61,0)
+409.61
+"BLD",9252,"KRN",771,0)
+771
+"BLD",9252,"KRN",779.2,0)
+779.2
+"BLD",9252,"KRN",870,0)
+870
+"BLD",9252,"KRN",8989.51,0)
+8989.51
+"BLD",9252,"KRN",8989.52,0)
+8989.52
+"BLD",9252,"KRN",8994,0)
+8994
+"BLD",9252,"KRN","B",.4,.4)
+
+"BLD",9252,"KRN","B",.401,.401)
+
+"BLD",9252,"KRN","B",.402,.402)
+
+"BLD",9252,"KRN","B",.403,.403)
+
+"BLD",9252,"KRN","B",.5,.5)
+
+"BLD",9252,"KRN","B",.84,.84)
+
+"BLD",9252,"KRN","B",3.6,3.6)
+
+"BLD",9252,"KRN","B",3.8,3.8)
+
+"BLD",9252,"KRN","B",9.2,9.2)
+
+"BLD",9252,"KRN","B",9.8,9.8)
+
+"BLD",9252,"KRN","B",19,19)
+
+"BLD",9252,"KRN","B",19.1,19.1)
+
+"BLD",9252,"KRN","B",101,101)
+
+"BLD",9252,"KRN","B",409.61,409.61)
+
+"BLD",9252,"KRN","B",771,771)
+
+"BLD",9252,"KRN","B",779.2,779.2)
+
+"BLD",9252,"KRN","B",870,870)
+
+"BLD",9252,"KRN","B",8989.51,8989.51)
+
+"BLD",9252,"KRN","B",8989.52,8989.52)
+
+"BLD",9252,"KRN","B",8994,8994)
+
+"BLD",9252,"QUES",0)
+^9.62^^
+"BLD",9252,"REQB",0)
+^9.611^^
+"FIA",11346000)
+HAND TREMOR READINGS
+"FIA",11346000,0)
+^KBBXHTR(11346000,
+"FIA",11346000,0,0)
+11346000P
+"FIA",11346000,0,1)
+y^y^f^^^^n
+"FIA",11346000,0,10)
+
+"FIA",11346000,0,11)
+
+"FIA",11346000,0,"RLRO")
+
+"FIA",11346000,11346000)
+0
+"FIA",11346000,11346000.01)
+0
+"FIA",11346000,11346000.13)
+0
+"FIA",11346000,11346000.14)
+0
+"MBREQ")
+0
+"QUES","XPF1",0)
+Y
+"QUES","XPF1","??")
+^D REP^XPDH
+"QUES","XPF1","A")
+Shall I write over your |FLAG| File
+"QUES","XPF1","B")
+YES
+"QUES","XPF1","M")
+D XPF1^XPDIQ
+"QUES","XPF2",0)
+Y
+"QUES","XPF2","??")
+^D DTA^XPDH
+"QUES","XPF2","A")
+Want my data |FLAG| yours
+"QUES","XPF2","B")
+YES
+"QUES","XPF2","M")
+D XPF2^XPDIQ
+"QUES","XPI1",0)
+YO
+"QUES","XPI1","??")
+^D INHIBIT^XPDH
+"QUES","XPI1","A")
+Want KIDS to INHIBIT LOGONs during the install
+"QUES","XPI1","B")
+NO
+"QUES","XPI1","M")
+D XPI1^XPDIQ
+"QUES","XPM1",0)
+PO^VA(200,:EM
+"QUES","XPM1","??")
+^D MG^XPDH
+"QUES","XPM1","A")
+Enter the Coordinator for Mail Group '|FLAG|'
+"QUES","XPM1","B")
+
+"QUES","XPM1","M")
+D XPM1^XPDIQ
+"QUES","XPO1",0)
+Y
+"QUES","XPO1","??")
+^D MENU^XPDH
+"QUES","XPO1","A")
+Want KIDS to Rebuild Menu Trees Upon Completion of Install
+"QUES","XPO1","B")
+NO
+"QUES","XPO1","M")
+D XPO1^XPDIQ
+"QUES","XPZ1",0)
+Y
+"QUES","XPZ1","??")
+^D OPT^XPDH
+"QUES","XPZ1","A")
+Want to DISABLE Scheduled Options, Menu Options, and Protocols
+"QUES","XPZ1","B")
+NO
+"QUES","XPZ1","M")
+D XPZ1^XPDIQ
+"QUES","XPZ2",0)
+Y
+"QUES","XPZ2","??")
+^D RTN^XPDH
+"QUES","XPZ2","A")
+Want to MOVE routines to other CPUs
+"QUES","XPZ2","B")
+NO
+"QUES","XPZ2","M")
+D XPZ2^XPDIQ
+"RTN")
+1
+"RTN","KBBXHTR0")
+0^1^B3160
+"RTN","KBBXHTR0",1,0)
+KBBXHTR0 ;CPC - Hand Tremor functions;16/6/14 9:50am
+"RTN","KBBXHTR0",2,0)
+ ;;0.1;EWD Hand Tremor;;Jun 16, 2014;Build 1
+"RTN","KBBXHTR0",3,0)
+ ;
+"RTN","KBBXHTR0",4,0)
+ ;Copyright 2014 CPC Computer Solutions Ltd, developed by Chris Casey
+"RTN","KBBXHTR0",5,0)
+ ;
+"RTN","KBBXHTR0",6,0)
+ ;  Licensed under the Apache License, Version 2.0 (the "License");
+"RTN","KBBXHTR0",7,0)
+ ;  you may not use this file except in compliance with the License.
+"RTN","KBBXHTR0",8,0)
+ ;  You may obtain a copy of the License at
+"RTN","KBBXHTR0",9,0)
+ ;
+"RTN","KBBXHTR0",10,0)
+ ;      http://www.apache.org/licenses/LICENSE-2.0
+"RTN","KBBXHTR0",11,0)
+ ;
+"RTN","KBBXHTR0",12,0)
+ ;  Unless required by applicable law or agreed to in writing, software
+"RTN","KBBXHTR0",13,0)
+ ;  distributed under the License is distributed on an "AS IS" BASIS,
+"RTN","KBBXHTR0",14,0)
+ ;  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+"RTN","KBBXHTR0",15,0)
+ ;  See the License for the specific language governing permissions and
+"RTN","KBBXHTR0",16,0)
+ ;  limitations under the License.
+"RTN","KBBXHTR0",17,0)
+ ;
+"RTN","KBBXHTR0",18,0)
+wrapAddTremorSet(z)
+"RTN","KBBXHTR0",19,0)
+ m inputs=^%zewdTemp($j,"inputs")
+"RTN","KBBXHTR0",20,0)
+ ;m ^cpc("d")=inputs
+"RTN","KBBXHTR0",21,0)
+ s ok=$$addTremorSet^KBBXHTR0(.inputs,.outputs)
+"RTN","KBBXHTR0",22,0)
+ m ^%zewdTemp($j,"outputs")=outputs
+"RTN","KBBXHTR0",23,0)
+ q ok
+"RTN","KBBXHTR0",24,0)
+wrapListTremorClients(z)
+"RTN","KBBXHTR0",25,0)
+ m inputs=^%zewdTemp($j,"inputs")
+"RTN","KBBXHTR0",26,0)
+ ;m ^cpc("d")=inputs
+"RTN","KBBXHTR0",27,0)
+ s ok=$$listTremorClients^KBBXHTR0(.inputs,.outputs)
+"RTN","KBBXHTR0",28,0)
+ m ^%zewdTemp($j,"outputs")=outputs
+"RTN","KBBXHTR0",29,0)
+ q ok
+"RTN","KBBXHTR0",30,0)
+wrapListTremorDates(z)
+"RTN","KBBXHTR0",31,0)
+ m inputs=^%zewdTemp($j,"inputs")
+"RTN","KBBXHTR0",32,0)
+ m ^cpc("dTT")=inputs
+"RTN","KBBXHTR0",33,0)
+ s ok=$$listTremors^KBBXHTR0(.inputs,.outputs)
+"RTN","KBBXHTR0",34,0)
+ m ^cpc("dTT1")=outputs
+"RTN","KBBXHTR0",35,0)
+ m ^%zewdTemp($j,"outputs")=outputs
+"RTN","KBBXHTR0",36,0)
+ q ok
+"RTN","KBBXHTR0",37,0)
+wrapGetTremorSet(z)
+"RTN","KBBXHTR0",38,0)
+ m inputs=^%zewdTemp($j,"inputs")
+"RTN","KBBXHTR0",39,0)
+ m ^cpc("gtsi")=inputs
+"RTN","KBBXHTR0",40,0)
+ s ok=$$getTremorSet^KBBXHTR0(.inputs,.outputs)
+"RTN","KBBXHTR0",41,0)
+ m ^cpc("gtso")=outputs
+"RTN","KBBXHTR0",42,0)
+ m ^%zewdTemp($j,"outputs")=outputs
+"RTN","KBBXHTR0",43,0)
+ q ok
+"RTN","KBBXHTR0",44,0)
+addTremorSet(inputs,outputs) ;;this functions adds a complete tremor reading set
+"RTN","KBBXHTR0",45,0)
+ ;inputs
+"RTN","KBBXHTR0",46,0)
+ ;userId
+"RTN","KBBXHTR0",47,0)
+ ;patientId
+"RTN","KBBXHTR0",48,0)
+ ;dateTimeStarted
+"RTN","KBBXHTR0",49,0)
+ ;dateTimeFinished
+"RTN","KBBXHTR0",50,0)
+ ;interval (in milliseconds)
+"RTN","KBBXHTR0",51,0)
+ ;data(setNo,entryType)=value ** nb setNo should be 1 based array
+"RTN","KBBXHTR0",52,0)
+ n %,%H,%I,DIERR,DILOCKTM,DISYS,DT,DTIME,DUZ,ERRORS,fileNo,IEN,IO,patientId,setIEN,typeIEN,U,userId,X,now
+"RTN","KBBXHTR0",53,0)
+ S DUZ=$G(inputs("userId")) i 'DUZ Q "User not supplied"
+"RTN","KBBXHTR0",54,0)
+ s DUZ(2)=DUZ
+"RTN","KBBXHTR0",55,0)
+ S DFN=$G(inputs("patientId")) i 'DFN Q "Patient not supplied"
+"RTN","KBBXHTR0",56,0)
+ d NOW^%DTC s DT=X,now=%
+"RTN","KBBXHTR0",57,0)
+ S fileNo=11346000
+"RTN","KBBXHTR0",58,0)
+ S FDA(fileNo,"?+1,",.01)=DFN
+"RTN","KBBXHTR0",59,0)
+ s FDA(fileNo+.01,"+2,?+1,",.01)=inputs("dateTimeStarted")
+"RTN","KBBXHTR0",60,0)
+ s FDA(fileNo+.01,"+2,?+1,",1)=inputs("dateTimeFinished")
+"RTN","KBBXHTR0",61,0)
+ s FDA(fileNo+.01,"+2,?+1,",2)=inputs("interval")
+"RTN","KBBXHTR0",62,0)
+ m data=inputs("data")
+"RTN","KBBXHTR0",63,0)
+ s setNo=0 f  s setNo=$o(data(setNo)) q:setNo=""  d
+"RTN","KBBXHTR0",64,0)
+ . s setIEN=10+setNo
+"RTN","KBBXHTR0",65,0)
+ . s FDA(fileNo+.13,"+"_setIEN_",+2,?+1,",.01)=setNo
+"RTN","KBBXHTR0",66,0)
+ . s entryType="" f  s entryType=$o(data(setNo,entryType)) q:entryType=""  d
+"RTN","KBBXHTR0",67,0)
+ ..  s typeIEN=1000000+(setIEN*100)+entryType
+"RTN","KBBXHTR0",68,0)
+ ..  s FDA(fileNo+.14,"+"_typeIEN_",+"_setIEN_",+2,?+1,",.01)=entryType
+"RTN","KBBXHTR0",69,0)
+ ..  S FDA(fileNo+.14,"+"_typeIEN_",+"_setIEN_",+2,?+1,",1)=data(setNo,entryType)
+"RTN","KBBXHTR0",70,0)
+ K IEN,ERRORS D UPDATE^DIE("S","FDA","IEN","ERRORS")
+"RTN","KBBXHTR0",71,0)
+ i $d(ERRORS) m outputs("ERRORS")=ERRORS Q ERRORS("DIERR",1,"TEXT",1)
+"RTN","KBBXHTR0",72,0)
+ m outputs=IEN
+"RTN","KBBXHTR0",73,0)
+ q ""
+"RTN","KBBXHTR0",74,0)
+listTremorClients(inputs,outputs)
+"RTN","KBBXHTR0",75,0)
+ ;inputs
+"RTN","KBBXHTR0",76,0)
+ n %,%H,%I,DIERR,DILOCKTM,DISYS,DT,DTIME,DUZ,ERRORS,fileNo,i,IEN,IO,list,LIST1,patientId,setIEN,typeIEN,U,userId,X,now
+"RTN","KBBXHTR0",77,0)
+ S DUZ=$G(inputs("userId")) i 'DUZ Q "User not supplied"
+"RTN","KBBXHTR0",78,0)
+ s DUZ(2)=DUZ
+"RTN","KBBXHTR0",79,0)
+ S fileNo=11346000
+"RTN","KBBXHTR0",80,0)
+ D LIST^DIC(fileNo,"",".01IE","","","","","","","","LIST1","ERRORS")
+"RTN","KBBXHTR0",81,0)
+ i $d(ERRORS) m outputs("ERRORS")=ERRORS Q ERRORS("DIERR",1,"TEXT",1)
+"RTN","KBBXHTR0",82,0)
+ M list=LIST1("DILIST")
+"RTN","KBBXHTR0",83,0)
+ s i="" f  s i=$o(list(2,i)) q:'i  d
+"RTN","KBBXHTR0",84,0)
+ . s outputs("results",i-1,"IEN")=list(2,i)
+"RTN","KBBXHTR0",85,0)
+ . s outputs("results",i-1,"NAME")=list(1,list(2,i))
+"RTN","KBBXHTR0",86,0)
+ . s outputs("results",i-1,"DFN")=list("ID",list(2,i),.01,"I")
+"RTN","KBBXHTR0",87,0)
+ q ""
+"RTN","KBBXHTR0",88,0)
+listTremors(inputs,outputs)
+"RTN","KBBXHTR0",89,0)
+ ;inputs
+"RTN","KBBXHTR0",90,0)
+ n %,%H,%I,DIERR,DILOCKTM,DISYS,DT,DTIME,DUZ,ERRORS,fileNo,IEN,IO,LIST,patientId,setIEN,typeIEN,U,userId,X,now
+"RTN","KBBXHTR0",91,0)
+ S DUZ=$G(inputs("userId")) i 'DUZ Q "User not supplied"
+"RTN","KBBXHTR0",92,0)
+ s DUZ(2)=DUZ
+"RTN","KBBXHTR0",93,0)
+ S fileNo=11346000
+"RTN","KBBXHTR0",94,0)
+ S IEN=$G(inputs("IEN"))
+"RTN","KBBXHTR0",95,0)
+ S DFN=$G(inputs("patientId")) i 'DFN,'IEN Q "Patient not supplied"
+"RTN","KBBXHTR0",96,0)
+ I 'IEN S IEN=$O(^KBBXHTR(fileNo,"B",DFN,"")) I IEN="" Q "No entries found"
+"RTN","KBBXHTR0",97,0)
+ D LIST^DIC(fileNo+.01,","_IEN_",",".01IE","","","","","","","","LIST","ERRORS")
+"RTN","KBBXHTR0",98,0)
+ i $d(ERRORS) m outputs("ERRORS")=ERRORS Q ERRORS("DIERR",1,"TEXT",1)
+"RTN","KBBXHTR0",99,0)
+ m list=LIST("DILIST")
+"RTN","KBBXHTR0",100,0)
+ s i="" f  s i=$o(list(2,i)) q:'i  d
+"RTN","KBBXHTR0",101,0)
+ . s outputs("results",i-1,"clientIEN")=IEN
+"RTN","KBBXHTR0",102,0)
+ . s outputs("results",i-1,"IEN")=list(2,i)
+"RTN","KBBXHTR0",103,0)
+ . s outputs("results",i-1,"DateExternal")=list(1,list(2,i))
+"RTN","KBBXHTR0",104,0)
+ . s outputs("results",i-1,"DateInternal")=list("ID",list(2,i),.01,"I")
+"RTN","KBBXHTR0",105,0)
+ q ""
+"RTN","KBBXHTR0",106,0)
+getTremorSet(inputs,outputs)
+"RTN","KBBXHTR0",107,0)
+ n %,%H,%I,cien,dFileNo,dien,DIERR,DILOCKTM,DISYS,DT,DTIME,DUZ,ERRORS,fileNo,i,IEN,ien,IENS,IO,list,LIST,lSet,patientId,setIEN,setNo,tSet,tType,typeIEN,U,userId,X,now
+"RTN","KBBXHTR0",108,0)
+ S DUZ=$G(inputs("userId")) i 'DUZ Q "User not supplied"
+"RTN","KBBXHTR0",109,0)
+ s DUZ(2)=DUZ
+"RTN","KBBXHTR0",110,0)
+ S fileNo=11346000
+"RTN","KBBXHTR0",111,0)
+ S cien=$G(inputs("ClientIEN")) I 'cien q "Client reference not supplied"
+"RTN","KBBXHTR0",112,0)
+ s dien=$g(inputs("DateIEN")) I 'dien q "date reference not supplied"
+"RTN","KBBXHTR0",113,0)
+ s IENS=""_dien_","_cien_","
+"RTN","KBBXHTR0",114,0)
+ d GETS^DIQ(fileNo+.01,IENS,"**","R","LIST","ERRORS")
+"RTN","KBBXHTR0",115,0)
+ i $d(ERRORS) m outputs("ERRORS")=ERRORS Q ERRORS("DIERR",1,"TEXT",1)
+"RTN","KBBXHTR0",116,0)
+ s outputs("results","StartDateE")=LIST(fileNo+.01,IENS,"READING DATETIME")
+"RTN","KBBXHTR0",117,0)
+ s outputs("results","EndDateE")=LIST(fileNo+.01,IENS,"END DATETIME")
+"RTN","KBBXHTR0",118,0)
+ s outputs("results","Interval")=LIST(fileNo+.01,IENS,"INTERVAL")	
+"RTN","KBBXHTR0",119,0)
+ s setNo=0,lSet=""
+"RTN","KBBXHTR0",120,0)
+ s dFileNo=fileNo+.14
+"RTN","KBBXHTR0",121,0)
+ s ien="" f  s ien=$o(LIST(dFileNo,ien)) q:ien=""  d
+"RTN","KBBXHTR0",122,0)
+ . s tSet=$p(ien,",",2)
+"RTN","KBBXHTR0",123,0)
+ . s tType=$p(ien,",",1)
+"RTN","KBBXHTR0",124,0)
+ . i '$d(lSet(tSet)) s lSet(tSet)=setNo,setNo=setNo+1
+"RTN","KBBXHTR0",125,0)
+ . s outputs("results","data",lSet(tSet),LIST(dFileNo,ien,"TYPE"))=LIST(dFileNo,ien,"VALUE")
+"RTN","KBBXHTR0",126,0)
+ q ""
+"SEC","^DIC",11346000,11346000,0,"AUDIT")
+@
+"SEC","^DIC",11346000,11346000,0,"DD")
+@
+"SEC","^DIC",11346000,11346000,0,"DEL")
+@
+"SEC","^DIC",11346000,11346000,0,"LAYGO")
+@
+"SEC","^DIC",11346000,11346000,0,"RD")
+@
+"SEC","^DIC",11346000,11346000,0,"WR")
+@
+"VER")
+8.0^22.0
+"^DD",11346000,11346000,0)
+FIELD^^.02^2
+"^DD",11346000,11346000,0,"DT")
+3140616
+"^DD",11346000,11346000,0,"IX","B",11346000,.01)
+
+"^DD",11346000,11346000,0,"NM","HAND TREMOR READINGS")
+
+"^DD",11346000,11346000,.01,0)
+PATIENT^RP2'^DPT(^0;1^Q
+"^DD",11346000,11346000,.01,1,0)
+^.1
+"^DD",11346000,11346000,.01,1,1,0)
+11346000^B
+"^DD",11346000,11346000,.01,1,1,1)
+S ^KBBXHTR(11346000,"B",$E(X,1,30),DA)=""
+"^DD",11346000,11346000,.01,1,1,2)
+K ^KBBXHTR(11346000,"B",$E(X,1,30),DA)
+"^DD",11346000,11346000,.01,3)
+
+"^DD",11346000,11346000,.01,"DT")
+3140616
+"^DD",11346000,11346000,.02,0)
+READING DATETIME^11346000.01D^^1;0
+"^DD",11346000,11346000.01,0)
+READING DATETIME SUB-FIELD^^3^4
+"^DD",11346000,11346000.01,0,"DT")
+3140616
+"^DD",11346000,11346000.01,0,"IX","B",11346000.01,.01)
+
+"^DD",11346000,11346000.01,0,"NM","READING DATETIME")
+
+"^DD",11346000,11346000.01,0,"UP")
+11346000
+"^DD",11346000,11346000.01,.01,0)
+READING DATETIME^RD^^0;1^S %DT="ESTXR" D ^%DT S X=Y K:Y<1 X
+"^DD",11346000,11346000.01,.01,1,0)
+^.1
+"^DD",11346000,11346000.01,.01,1,1,0)
+11346000.01^B
+"^DD",11346000,11346000.01,.01,1,1,1)
+S ^KBBXHTR(11346000,DA(1),1,"B",$E(X,1,30),DA)=""
+"^DD",11346000,11346000.01,.01,1,1,2)
+K ^KBBXHTR(11346000,DA(1),1,"B",$E(X,1,30),DA)
+"^DD",11346000,11346000.01,.01,"DT")
+3140616
+"^DD",11346000,11346000.01,1,0)
+END DATETIME^RD^^0;2^S %DT="ESTXR" D ^%DT S X=Y K:Y<1 X
+"^DD",11346000,11346000.01,1,"DT")
+3140616
+"^DD",11346000,11346000.01,2,0)
+INTERVAL^RNJ4,0^^0;3^K:+X'=X!(X>1000)!(X<1)!(X?.E1"."1N.N) X
+"^DD",11346000,11346000.01,2,3)
+Reading interval in millisenconds
+"^DD",11346000,11346000.01,2,"DT")
+3140616
+"^DD",11346000,11346000.01,3,0)
+ENTRY^11346000.13A^^1;0
+"^DD",11346000,11346000.13,0)
+ENTRY SUB-FIELD^^.02^2
+"^DD",11346000,11346000.13,0,"DT")
+3140616
+"^DD",11346000,11346000.13,0,"IX","B",11346000.13,.01)
+
+"^DD",11346000,11346000.13,0,"NM","ENTRY")
+
+"^DD",11346000,11346000.13,0,"UP")
+11346000.01
+"^DD",11346000,11346000.13,.01,0)
+ENTRY^MNJ4,0^^0;1^K:+X'=X!(X>9999)!(X<1)!(X?.E1"."1N.N) X
+"^DD",11346000,11346000.13,.01,1,0)
+^.1
+"^DD",11346000,11346000.13,.01,1,1,0)
+11346000.13^B
+"^DD",11346000,11346000.13,.01,1,1,1)
+S ^KBBXHTR(11346000,DA(2),1,DA(1),1,"B",$E(X,1,30),DA)=""
+"^DD",11346000,11346000.13,.01,1,1,2)
+K ^KBBXHTR(11346000,DA(2),1,DA(1),1,"B",$E(X,1,30),DA)
+"^DD",11346000,11346000.13,.01,3)
+Type a number between 1 and 9999, 0 decimal digits.
+"^DD",11346000,11346000.13,.01,"DT")
+3140616
+"^DD",11346000,11346000.13,.02,0)
+TYPE^11346000.14SA^^1;0
+"^DD",11346000,11346000.14,0)
+TYPE SUB-FIELD^^1^2
+"^DD",11346000,11346000.14,0,"DT")
+3140616
+"^DD",11346000,11346000.14,0,"IX","B",11346000.14,.01)
+
+"^DD",11346000,11346000.14,0,"NM","TYPE")
+
+"^DD",11346000,11346000.14,0,"UP")
+11346000.13
+"^DD",11346000,11346000.14,.01,0)
+TYPE^MRS^1:X axis;2:Y axis;3:Z axis;4:roll;5:yaw;6:pitch;^0;1^Q
+"^DD",11346000,11346000.14,.01,1,0)
+^.1
+"^DD",11346000,11346000.14,.01,1,1,0)
+11346000.14^B
+"^DD",11346000,11346000.14,.01,1,1,1)
+S ^KBBXHTR(11346000,DA(3),1,DA(2),1,DA(1),1,"B",$E(X,1,30),DA)=""
+"^DD",11346000,11346000.14,.01,1,1,2)
+K ^KBBXHTR(11346000,DA(3),1,DA(2),1,DA(1),1,"B",$E(X,1,30),DA)
+"^DD",11346000,11346000.14,.01,"DT")
+3140616
+"^DD",11346000,11346000.14,1,0)
+VALUE^RNJ14,9^^0;2^K:+X'=X!(X>9999)!(X<-9999)!(X?.E1"."10N.N) X
+"^DD",11346000,11346000.14,1,3)
+Type a number between -9999 and 9999, 9 decimal digits.
+"^DD",11346000,11346000.14,1,"DT")
+3140616
+"^DIC",11346000,11346000,0)
+HAND TREMOR READINGS^11346000
+"^DIC",11346000,11346000,0,"GL")
+^KBBXHTR(11346000,
+"^DIC",11346000,"B","HAND TREMOR READINGS",11346000)
+
+**END**
+**END**

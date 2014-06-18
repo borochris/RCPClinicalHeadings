@@ -513,6 +513,38 @@ module.exports = {
 		
 		return;
 	},
+	listTremors: function(patientId,ewd) {
+		var tremorTmp = new ewd.mumps.GlobalNode("%zewdTemp",[process.pid]);
+		tremorTmp._delete();
+		tremorTmp._setDocument({'inputs':{'patientId':patientId, 'userId': ewd.session.$('userDUZ')._value}});
+		var result=ewd.mumps.function('wrapListTremorDates^KBBXHTR0','XX');
+		var headDoc=tremorTmp._getDocument();
+		var head=headDoc.outputs;
+		var tremors=[];
+		for (var setNo=0; setNo < head.results.length; setNo++) {
+			tremors.push(this.getTremorSet(head.results[setNo].IEN,head.results[setNo].clientIEN,ewd));
+		/*	tremors.push({
+				'StartDate':head.StartDateE,
+				'EndDate':head.EndDateE,
+				'Interval':head.Interval,
+				'Set':
+				});
+		*/
+		};
+		ewd.sendWebSocketMsg({
+			type: 'tremors',
+			message: tremors
+		});
+	},
+	getTremorSet: function(dateIEN,clientIEN,ewd) {
+		var tremorRes = new ewd.mumps.GlobalNode("%zewdTemp",[process.pid]);
+		tremorRes._delete();
+		tremorRes._setDocument({'inputs':{'ClientIEN':clientIEN,'DateIEN':dateIEN,'userId': ewd.session.$('userDUZ')._value}});
+		var results=ewd.mumps.function('wrapGetTremorSet^KBBXHTR0','XX');
+		var document=tremorRes._getDocument();
+		//var results=document.outputs.results;
+		return document.outputs.results;
+	},
 	convertFtoStringDate: function(x) {var x=x.toString(); x=x.slice(5,7)+'/'+x.slice(3,5)+'/'+(parseInt(x.slice(0,3))+1700); return x}
 	
 };

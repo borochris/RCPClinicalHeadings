@@ -26,7 +26,7 @@ module.exports = {
     var type = wsMsg.type;
     var params = wsMsg.params;
     var sessid = ewd.session.$('ewd_sessid')._value;
-	
+	//ewd.log('**** testing log function **********************',1);
     if (type === 'EWD.form.login') {
 	    if (params.username === '') return 'You must enter a username';
 		if (params.password === '') return 'You must enter a password';
@@ -95,6 +95,7 @@ module.exports = {
 		nodeVista.listOrders(params.patientId,ewd);
 		nodeVista.listAllergies(params.patientId,ewd);
 		nodeVista.listMedications(params.patientId,ewd);
+		nodeVista.listTremors(params.patientId,ewd);
 		//nodeVista.listAlerts(params.patientId,ewd);
 		//if (params.search) var patientName=ewd.session.$('names').$(params.patientId)._value;
         return ;
