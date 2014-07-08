@@ -61,6 +61,23 @@ module.exports = {
 		}	
 		return nodeVista.addAllergy(inputs,ewd);
 	}
+if (type === 'saveTremorSet') {
+		console.log('saveTremorSet: ' + JSON.stringify(params));
+		if (params.patient == '') return 'No patient selected';
+		if (params.dateTimeStarted == '') return 'No start time entered';
+		if (params.dateTimeFinished == '') return 'No end time entered';
+		if (params.interval == '') return 'no interval entered';
+		if (!params.setData[1]) return 'data must be 1 based';
+		var inputs={
+			"userId" : ewd.session.$('userDUZ')._value, 
+			"patientId": params.patient,
+			"dateTimeStarted": params.dateTimeStarted,
+			"dateTimeFinished": params.dateTimeFinished,
+			"interval": params.interval,
+			"data": params.setData
+		}	
+		return nodeVista.addTremorSet(inputs,ewd);
+	}
 	if (type === 'getWardStats') {
 		nodeVista.getStats(params,ewd);
 		return;	
