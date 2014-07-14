@@ -8,12 +8,14 @@ Version 0.3
 This Version introduces the first release of the facility to capture, store and retrieve tremor readings via a LeapMotion device.
 The majority of the code underpinning this work was created during the London NHS Hackday 23 May - 24 May 2014
 My thanks go to the members of the team that created this novel concept.
+
 They are
-// Rob Tweed
-// Simon Tweed
-// Fraser Thomson
-// Madeleine Neil Smith
-// Charlotte lewis
+
+	Rob Tweed
+	Simon Tweed
+	Fraser Thomson
+	Madeleine Neil Smith
+	Charlotte lewis
 
 This version also introduces a new VistA KIDS build file KBBX.KID that contains the tremor structures.
 Installation of this is a standard VistA function.
@@ -21,6 +23,7 @@ Installation of this is a standard VistA function.
 Installation
 ============
 This build reverts to Osehra directory structures.
+	
 	index.html    -->>  /home/osehra/www/ewd/VistaRCP
 	app.js        -->>  /home/osehra/www/ewd/VistaRCP
 	nodeVista.js  -->>  /home/osehra/node/node_modules
@@ -28,14 +31,19 @@ This build reverts to Osehra directory structures.
 	ZZCPCR00.m    -->>  /p on gt.m install or %RR on Cache
 	KBBXHTR0.m    -->>  /p on gt.m install or %RR on Cache
 	NHS_VISTA.jpg -->>  /home/osehra/www/images
+	/Tremor       -->>  /home/osehra/www/
 
 These are the paths for later builds. Change index.html accordingly.
+
 	index.html    -->>  /home/vista/ewdjs/www/VistaRCP
 	app.js        -->>  /home/vista/ewdjs/www/VistaRCP
 	nodeVista.js  -->>  /home/vista/ewdjs/node_modules
 	VistaRCP.js   -->>  /home/vista/ewdjs/node_modules
 	ZZCPCR00.m    -->>  /p on gt.m install or %RR on Cache
+	KBBXHTR0.m    -->>  /p on gt.m install or %RR on Cache
 	NHS_VISTA.jpg -->>  /home/vista/extjs/www/images
+	/Tremor       -->>  /home/vista/ewdjs/www/
+
 
 Licence
 =======
