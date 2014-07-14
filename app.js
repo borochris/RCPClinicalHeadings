@@ -15,6 +15,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
+//EWD.sockets.log = true;
 EWD.application = {
   name: 'VistaRCP',
   currentPanel:'',
@@ -36,7 +37,7 @@ var onePatient = {};
 //  EWD.isReady();
 // });
 var swapPanel= function(pnl) {
-	console.log('swapping to '+pnl);
+	//console.log('swapping to '+pnl);
 	var oldp=$('#'+EWD.application.currentPanel)
 	var newp=$('#'+pnl)
 	hideDetail();
@@ -127,7 +128,7 @@ var toggle=function(e) {
 	e.preventDefault();
 	$('.active').toggleClass('active', false);
 	var current=e.currentTarget.id;
-	if (current == 'pMenuInvestLab' || current == 'pMenuInvestVital') current='pMenuSub1';
+	if (current == 'pMenuInvestLab' || current == 'pMenuInvestVital' || current === 'pMenuInvestTremor') current='pMenuSub1';
 	$('#'+current).toggleClass("active", true);
 	return;
 };
@@ -226,6 +227,7 @@ EWD.onSocketsReady = function() {
 	onePatient={};
 	$('#pMenuInvestigationsBadge').text('');
 	$('#pMenuInvestVitalBadge').text('');
+	$('#pMenuInvestTremorBadge').text('');
 	$('#pMenuInvestLabBadge').text('');
 	$('#pMenuContactsBadge').text('');
 	$('#pMenuProceduresBadge').text('');
@@ -236,6 +238,7 @@ EWD.onSocketsReady = function() {
 	$('#pMenuSafetyAlertsBadge').text('');
 	
 	$('#pMenuInvestVital').addClass('disabled');
+	//$('#pMenuInvestTremor').addClass('disabled');
 	$('#pMenuInvestLab').addClass('disabled');
 	$('#pMenuContacts').addClass('disabled');
 	$('#pMenuProcedures').addClass('disabled');
@@ -304,6 +307,7 @@ EWD.onSocketsReady = function() {
  $('body').on( 'click', '#pMenuProblems', function(event) {toggle(event);swapPanel('problemsPnl');})
  $('body').on( 'click', '#pMenuInvestLab', function(event) {toggle(event);swapPanel('investLabPnl');})
  $('body').on( 'click', '#pMenuInvestVital', function(event) {toggle(event);swapPanel('investVitalPnl');})
+ $('body').on( 'click', '#pMenuInvestTremor', function(event) {toggle(event);swapPanel('investTremorPnl');})
  $('body').on( 'click', '#pMenuMedications', function(event) {toggle(event);swapPanel('medicationsPnl');})
  $('body').on( 'click', '#pMenuAllergies', function(event) {toggle(event);swapPanel('allergiesPnl');})
  $('body').on( 'click', '#pMenuSafetyAlerts', function(event) {toggle(event);swapPanel('safetyAlertsPnl');})
@@ -314,7 +318,7 @@ EWD.onSocketsReady = function() {
 };
 
 EWD.onSocketMessage = function(messageObj) {
-	console.log(messageObj.type);
+	//console.log(messageObj.type);
 	if (messageObj.type === 'getPatientSummary') {	
 		$('#patientSelectionForm').modal('hide');
 		$('#patientMenu').show();
@@ -395,6 +399,7 @@ EWD.onSocketMessage = function(messageObj) {
 			$('#pMenuInvestigationsBadge').text('');
 			//$('#personHeaderWardText').text('');
 			$('#pMenuInvestVitalBadge').text('');
+			$('#pMenuInvestTremorBadge').text('');
 			$('#pMenuInvestLabBadge').text('');
 			$('#pMenuContactsBadge').text('');
 			$('#pMenuProceduresBadge').text('');
@@ -405,6 +410,7 @@ EWD.onSocketMessage = function(messageObj) {
 			$('#pMenuSafetyAlertsBadge').text('');
 			
 			$('#pMenuInvestVital').addClass('disabled');
+			$('#pMenuInvestTremor').addClass('disabled');
 			$('#pMenuInvestLab').addClass('disabled');
 			$('#pMenuContacts').addClass('disabled');
 			$('#pMenuProcedures').addClass('disabled');
@@ -423,12 +429,103 @@ EWD.onSocketMessage = function(messageObj) {
 		});
 		return;
 	}
+	if (messageObj.type === 'tremors') {
+		//console.log('tremors: '+ JSON.stringify(messageObj,2)); 
+		//update higher level menu totals
+		var t=parseInt($('#pMenuInvestigationsBadge').text())||0;
+		if (messageObj.message.length) {$('#pMenuInvestigationsBadge').text(messageObj.message.length+t);}
+		//
+		$('#pMenuInvestTremorBadge').text(messageObj.message.length||'');
+		var data=messageObj.message;
+		onePatient.tremors=data;
+		var tremorData=[];
+		for (var i=0;i<data.length;i++) {
+			tremorData.push([data[i].StartDateE,data[i].EndDateE,data[i].Interval]);
+		}
+		var tremorTableDT=$('#tremorsTable').dataTable({
+			'bDestroy':true,
+			'aaData': tremorData,
+			'aoColumns': [
+				{'sTitle':'Start Date/Time'},{'sTitle':'End Date/Time'},{'sTitle':'Interval'}
+			]
+		}).css('width','');
+
+		
+		$(tremorTableDT.fnGetNodes()).click(function(e){	
+			if ($(this).hasClass('success')) {
+				$(this).removeClass('success');
+			}
+			else {
+				tremorTableDT.$('tr.success').removeClass('success');
+				$(this).addClass('success');
+			};
+			e.preventDefault();
+			e.stopPropagation();
+			//$('#detailHeader').text('Presenting Complaint Details');
+			var rowClicked=tremorTableDT.fnGetPosition( this );
+			//EWD.application.dump=rowClicked;
+			
+			//$('#detailPnl').html(dispJSON(onePatient.complaints[rowClicked]));
+			$('#mainContent').show();
+			$('#graphContainer').show();
+			thisData=onePatient.tremors[rowClicked];
+			var graphTime=0;
+			var graphInterval=thisData.Interval;
+			var thisGraphData={};
+			for (var i=0;i<thisData.data.length;i++) {
+				graphTime=graphTime+(graphInterval/1000);
+				//console.log(i);
+				for (var Gtype in thisData.data[i]) {
+					//console.log(Gtype);
+					if (!thisGraphData[Gtype]) {thisGraphData[Gtype]=[];};
+					if (Gtype == 'roll') {thisGraphData[Gtype].push([graphTime,(thisData.data[i][Gtype] * 57)]);}
+					else {thisGraphData[Gtype].push([graphTime,thisData.data[i][Gtype]]);}
+				}
+			};
+			var plotArray = [];
+			for (var Gtype in thisGraphData) {
+				plotArray.push({data: thisGraphData[Gtype], label: Gtype})
+			};
+
+			var options = {
+				xaxis: {
+				  min: 0,
+				  max: 10,
+				  axisLabel: "Time",
+				  //axisLabelUseCanvas: true,
+				  axisLabelFontSizePixels: 12,
+				  axisLabelFontFamily: 'Verdana, Arial',
+				  axisLabelPadding: 10
+				}
+			  };
+			graph = $.plot("#placeholder", plotArray, options);
+			$('#mainContent').show();
+
+			//console.log(JSON.stringify(thisGraphData,null,2));
+			//showDetail();
+		});
+		
+		
+		$('#pMenuInvestTremor').removeClass('disabled');
+		return;
+	}
+	if (messageObj.type === 'addTremorSet')	{
+			$('#mainContent').hide();
+			$('#startBtn').collapse('hide');
+			$('#discardBtn').collapse('hide');
+			$('#addTremorBtn').collapse('show');
+			$('#warnRecord').collapse('hide');
+			$('#stopBtn').collapse('hide');
+			$('#saveBtn').collapse('hide');
+			$('#TremorTableRow').show();
+		return;
+	}
 	if (messageObj.type === 'vitalCount') {
 		$('#demTVitals').text(messageObj.message.length);
 		var t=parseInt($('#pMenuInvestigationsBadge').text())||0;
 		if (messageObj.message.length) {
 			$('#pMenuInvestigationsBadge').text(messageObj.message.length+t);
-		}
+		};
 		$('#pMenuInvestVitalBadge').text(messageObj.message.length||'');
 			//console.log(JSON.stringify(messageObj));
 		var vitalData=[];
@@ -566,7 +663,7 @@ EWD.onSocketMessage = function(messageObj) {
 			showDetail();
 		});
 		return;
-	}
+	};
 	
 	if (messageObj.type === 'complaintCount') {
 		$('#pMenuComplaintsBadge').text(messageObj.message.length||''); 
@@ -609,7 +706,7 @@ EWD.onSocketMessage = function(messageObj) {
 		return;
 	}
 	if (messageObj.type === 'safetyAlerts') {
-		console.log(JSON.stringify(messageObj));
+		//console.log(JSON.stringify(messageObj));
 		var data=messageObj.message;
 		onePatient.safeties=data;
 		var safetyData=[];
@@ -801,7 +898,7 @@ EWD.onSocketMessage = function(messageObj) {
 		}
 		var m=messageObj.message[0].PharmacyPatient;
 		/* Don't include Header Record
-		for (var i in m) {
+		for (var i in m) {F
 			if (!(i=='UnitDose' || i=='Non_vaMeds' || i=='Iv')) {basicRecord[i]=m[i]};
 		};
 		*/
@@ -1002,7 +1099,7 @@ EWD.onSocketMessage = function(messageObj) {
 		return;
 	}
 	if (messageObj.type === 'pictures') {
-		console.log(JSON.stringify(messageObj));
+		//console.log(JSON.stringify(messageObj));
 		var picxref={};
 		var data=messageObj.message;
 		var path='/images/pictures/'
@@ -1156,5 +1253,5 @@ EWD.onSocketMessage = function(messageObj) {
 	return;
   };  
 	//catch any uncaught messages
-	console.log(JSON.stringify(messageObj));
+	console.log('***** unhandled message ****** '+JSON.stringify(messageObj));
 };

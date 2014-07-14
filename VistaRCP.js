@@ -61,20 +61,20 @@ module.exports = {
 		}	
 		return nodeVista.addAllergy(inputs,ewd);
 	}
-if (type === 'saveTremorSet') {
-		console.log('saveTremorSet: ' + JSON.stringify(params));
-		if (params.patient == '') return 'No patient selected';
-		if (params.dateTimeStarted == '') return 'No start time entered';
-		if (params.dateTimeFinished == '') return 'No end time entered';
-		if (params.interval == '') return 'no interval entered';
-		if (!params.setData[1]) return 'data must be 1 based';
+	if (type === 'saveTremorSet') {
+		//ewd.log('saveTremorSet: ' + JSON.stringify(params),1);
+		if (!params.patient || params.patient == '') return 'No patient selected';
+		if (!params.dateTimeStarted || params.dateTimeStarted == '') return 'No start time entered';
+		if (!params.dateTimeFinished || params.dateTimeFinished == '') return 'No end time entered';
+		if (!params.interval || params.interval == '') return 'no interval entered';
+		//if (!params.setData[1]) return 'data must be 1 based';
 		var inputs={
 			"userId" : ewd.session.$('userDUZ')._value, 
 			"patientId": params.patient,
-			"dateTimeStarted": params.dateTimeStarted,
-			"dateTimeFinished": params.dateTimeFinished,
+			"dateTimeStarted": ewd.util.hDate(params.dateTimeStarted),
+			"dateTimeFinished": ewd.util.hDate(params.dateTimeFinished),
 			"interval": params.interval,
-			"data": params.setData
+			"data": params.data
 		}	
 		return nodeVista.addTremorSet(inputs,ewd);
 	}

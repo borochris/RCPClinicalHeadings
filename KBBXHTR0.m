@@ -16,18 +16,21 @@ KBBXHTR0 ;CPC - Hand Tremor functions;16/6/14 9:50am
  ;  limitations under the License.
  ;
 wrapAddTremorSet(z)
+	n inputs,outputs
 	m inputs=^%zewdTemp($j,"inputs")
-	;m ^cpc("d")=inputs
+	m ^cpc("d")=inputs
 	s ok=$$addTremorSet^KBBXHTR0(.inputs,.outputs)
 	m ^%zewdTemp($j,"outputs")=outputs
 	q ok
 wrapListTremorClients(z)
+	n inputs,outputs
 	m inputs=^%zewdTemp($j,"inputs")
 	;m ^cpc("d")=inputs
 	s ok=$$listTremorClients^KBBXHTR0(.inputs,.outputs)
 	m ^%zewdTemp($j,"outputs")=outputs
 	q ok
 wrapListTremorDates(z)
+	n inputs,outputs
 	m inputs=^%zewdTemp($j,"inputs")
 	m ^cpc("dTT")=inputs
 	s ok=$$listTremors^KBBXHTR0(.inputs,.outputs)
@@ -35,6 +38,7 @@ wrapListTremorDates(z)
 	m ^%zewdTemp($j,"outputs")=outputs
 	q ok
 wrapGetTremorSet(z)
+	n inputs,outputs
 	m inputs=^%zewdTemp($j,"inputs")
 	m ^cpc("gtsi")=inputs
 	s ok=$$getTremorSet^KBBXHTR0(.inputs,.outputs)
@@ -49,20 +53,23 @@ addTremorSet(inputs,outputs)	;;this functions adds a complete tremor reading set
 	;dateTimeFinished
 	;interval (in milliseconds)
 	;data(setNo,entryType)=value ** nb setNo should be 1 based array
-	n %,%H,%I,DIERR,DILOCKTM,DISYS,DT,DTIME,DUZ,ERRORS,fileNo,IEN,IO,patientId,setIEN,typeIEN,U,userId,X,now
+	n %,%H,%I,dateS,dateE,DIERR,DILOCKTM,DISYS,DT,DTIME,DUZ,ERRORS,fileNo,IEN,IO,patientId,setOff,setIEN,typeIEN,U,userId,X,now
 	S DUZ=$G(inputs("userId")) i 'DUZ Q "User not supplied"
 	s DUZ(2)=DUZ
 	S DFN=$G(inputs("patientId")) i 'DFN Q "Patient not supplied"
 	d NOW^%DTC s DT=X,now=%
 	S fileNo=11346000
 	S FDA(fileNo,"?+1,",.01)=DFN
-	s FDA(fileNo+.01,"+2,?+1,",.01)=inputs("dateTimeStarted")
-	s FDA(fileNo+.01,"+2,?+1,",1)=inputs("dateTimeFinished")
+	s dateS=inputs("dateTimeStarted") i dateS?.N1",".N S dateS=$$HTFM^XLFDT(dateS)
+	s dateE=inputs("dateTimeFinished") i dateE?.N1",".N S dateE=$$HTFM^XLFDT(dateE)
+	s FDA(fileNo+.01,"+2,?+1,",.01)=dateS
+	s FDA(fileNo+.01,"+2,?+1,",1)=dateE
 	s FDA(fileNo+.01,"+2,?+1,",2)=inputs("interval")
 	m data=inputs("data")
-	s setNo=0 f  s setNo=$o(data(setNo)) q:setNo=""  d
-	. s setIEN=10+setNo
-	. s FDA(fileNo+.13,"+"_setIEN_",+2,?+1,",.01)=setNo
+	s setOff=0 s:$o(data(""))=0 setOff=1
+	s setNo="" f  s setNo=$o(data(setNo)) q:setNo=""  d
+	. s setIEN=10+setNo+setOff
+	. s FDA(fileNo+.13,"+"_setIEN_",+2,?+1,",.01)=setNo+setOff
 	. s entryType="" f  s entryType=$o(data(setNo,entryType)) q:entryType=""  d
 	..  s typeIEN=1000000+(setIEN*100)+entryType
 	..  s FDA(fileNo+.14,"+"_typeIEN_",+"_setIEN_",+2,?+1,",.01)=entryType
@@ -72,7 +79,7 @@ addTremorSet(inputs,outputs)	;;this functions adds a complete tremor reading set
 	m outputs=IEN
 	q ""
 listTremorClients(inputs,outputs)
-	;inputs
+	;inputs 
 	n %,%H,%I,DIERR,DILOCKTM,DISYS,DT,DTIME,DUZ,ERRORS,fileNo,i,IEN,IO,list,LIST1,patientId,setIEN,typeIEN,U,userId,X,now
 	S DUZ=$G(inputs("userId")) i 'DUZ Q "User not supplied"
 	s DUZ(2)=DUZ
@@ -87,7 +94,7 @@ listTremorClients(inputs,outputs)
 	q ""
 listTremors(inputs,outputs)
 	;inputs
-	n %,%H,%I,DIERR,DILOCKTM,DISYS,DT,DTIME,DUZ,ERRORS,fileNo,IEN,IO,LIST,patientId,setIEN,typeIEN,U,userId,X,now
+	n %,%H,%I,DIERR,DILOCKTM,DISYS,DT,DTIME,DUZ,ERRORS,fileNo,IEN,IO,LIST,list,patientId,setIEN,typeIEN,U,userId,X,now
 	S DUZ=$G(inputs("userId")) i 'DUZ Q "User not supplied"
 	s DUZ(2)=DUZ
 	S fileNo=11346000
@@ -97,11 +104,11 @@ listTremors(inputs,outputs)
 	D LIST^DIC(fileNo+.01,","_IEN_",",".01IE","","","","","","","","LIST","ERRORS")
 	i $d(ERRORS) m outputs("ERRORS")=ERRORS Q ERRORS("DIERR",1,"TEXT",1)
 	m list=LIST("DILIST")
-	s i="" f  s i=$o(list(2,i)) q:'i  d
+	s i="" f  s i=$o(list(1,i)) q:'i  d
 	. s outputs("results",i-1,"clientIEN")=IEN
 	. s outputs("results",i-1,"IEN")=list(2,i)
-	. s outputs("results",i-1,"DateExternal")=list(1,list(2,i))
-	. s outputs("results",i-1,"DateInternal")=list("ID",list(2,i),.01,"I")
+	. s outputs("results",i-1,"DateExternal")=list("ID",i,.01,"E")
+	. s outputs("results",i-1,"DateInternal")=list("ID",i,.01,"I")
 	q ""
 getTremorSet(inputs,outputs)
 	n %,%H,%I,cien,dFileNo,dien,DIERR,DILOCKTM,DISYS,DT,DTIME,DUZ,ERRORS,fileNo,i,IEN,ien,IENS,IO,list,LIST,lSet,patientId,setIEN,setNo,tSet,tType,typeIEN,U,userId,X,now

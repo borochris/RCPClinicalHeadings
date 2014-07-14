@@ -18,38 +18,44 @@
 -->
 <html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
 
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-touch-fullscreen" content="yes">
-    <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0">
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta name="author" content="Chris Casey">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-touch-fullscreen" content="yes" />
+    <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="author" content="Chris Casey" />
 
-    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet" />
+	<link href="/respond/bootstrap.min.css" rel="stylesheet" />
+    <!-- <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet" /> -->
     <link href="//cdnjs.cloudflare.com/ajax/libs/select2/3.4.5/select2.css" rel="stylesheet" />
     <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/css/toastr.min.css" rel="stylesheet" />
     <link href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css" rel="stylesheet" />
+	<link rel="stylesheet" type="text/css" href="//ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/css/jquery.dataTables.css">
+	<!--
+    <link href="/bootstrap-3.0.0/dist/css/bootstrap.css" rel="stylesheet" />
+	<link href="/toastr/toastr.css" rel="stylesheet" />
+	<link href="/select2/select2.css" rel="stylesheet" />
 	<link href="/dataTables/jquery.dataTables.css" rel="stylesheet" />
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-	<!--    
-    <!--[if lt IE 9]>
-	<script src="/bootstrap-3.0.0/assets/js/html5shiv.js"></script>
-      <script src="/bootstrap-3.0.0/assets/js/respond.min.js"></script>
-    <![endif]-->
 	-->
+    <!--[if (IE 6)|(IE 7)|(IE 8)]><script type="text/javascript" src="http://ajax.cdnjs.com/ajax/libs/json2/20110223/json2.js"></script><![endif]-->
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="/respond/html5shiv.js"></script>
+      <script src="/respond/respond.js"></script>
+    <![endif]-->
+
     <!-- Fav and touch icons -->
-    <link rel="shortcut icon" href="//ematic-solutions.com/cdn/bootstrap/2.3.1/ico/favicon.png" />
+    <link rel="shortcut icon" href="/images/favicon.png" />
     <link rel="apple-touch-icon-precomposed" sizes="144x144" href="//ematic-solutions.com/cdn/bootstrap/2.3.1/ico/apple-touch-icon-144-precomposed.png" />
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="//ematic-solutions.com/cdn/bootstrap/2.3.1/ico/apple-touch-icon-114-precomposed.png" />
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="//ematic-solutions.com/cdn/bootstrap/2.3.1/ico/apple-touch-icon-72-precomposed.png" />
     <link rel="apple-touch-icon-precomposed" href="//ematic-solutions.com/cdn/bootstrap/2.3.1/ico/apple-touch-icon-57-precomposed.png" />
 
     <script src="/socket.io/socket.io.js"></script>
-    <!--[if (IE 6)|(IE 7)|(IE 8)]><script type="text/javascript" src="http://ajax.cdnjs.com/ajax/libs/json2/20110223/json2.js"></script><![endif]-->
 
     <title>Vista RCP Demonstrator</title>
 
@@ -94,6 +100,36 @@
 		.scroll-x {
 			overflow-x: auto;
 		}
+	/* tremors */
+	  .graph-Container {
+        box-sizing: border-box;
+        width: 850px;
+        height: 460px;
+        padding: 20px 15px 15px 15px;
+        margin: 15px auto 30px auto;
+        border: 1px solid #ddd;
+        background: #fff;
+        background: linear-gradient(#f6f6f6 0, #fff 50px);
+        background: -o-linear-gradient(#f6f6f6 0, #fff 50px);
+        background: -ms-linear-gradient(#f6f6f6 0, #fff 50px);
+        background: -moz-linear-gradient(#f6f6f6 0, #fff 50px);
+        background: -webkit-linear-gradient(#f6f6f6 0, #fff 50px);
+        box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+        -o-box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        -ms-box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        -moz-box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        -webkit-box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+      }
+      .graph-Placeholder {
+        width: 820px;
+        height: 420px;
+        font-size: 14px;
+        line-height: 1.2em;
+      }
+      .leapGraph {
+        height: 400px;
+      }
+
     </style>
 
 
@@ -128,6 +164,55 @@
         </div>
       </div>
     </div>
+    <!-- Modal info panel -->
+    <div id="analysisPanel" class="modal fade">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3>Analysis of Results</h3>
+          </div>
+          <div class="modal-body" id="analysisBody">
+            <table class="table">
+              <hr>
+                <th>
+                  Axis
+                </th>
+                <th>
+                  Amplitude (mm)
+                </th>
+                <th>
+                  Frequency (Hz)
+                </th>
+              </hr>
+              <tr>
+                <td id="X">X</td>
+                <td id="XA"></td>
+                <td id="XF"></td>
+              <tr>
+              <tr>
+                <td id="Y">Y</td>
+                <td id="YA"></td>
+                <td id="YF"></td>
+              </tr>
+              <tr>
+                <td id="Z">Z</td>
+                <td id="ZA"></td>
+                <td id="ZF"></td>
+              </tr>
+              <tr>
+                <td id="R">Roll</td>
+                <td id="RA"></td>
+                <td id="RF"></td>
+              </tr>
+            </table>
+          </div>
+          <div class="modal-footer">
+            <a href="#" id="closeAnalysis" class="btn btn-danger">Close</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
 
      <!-- Main Page Definition -->
 
@@ -257,6 +342,7 @@
                 <ul class="dropdown-menu nav bs-sidenav nav-pills nav-stacked" id="pMenuSub1Proc">
 					<li id="pMenuInvestLab"><a href="#">Lab Tests<span class="badge pull-right" id="pMenuInvestLabBadge"></span></a></li>
 					<li id="pMenuInvestVital"><a href="#">Vital Signs<span class="badge pull-right" id="pMenuInvestVitalBadge"></span></a></li>
+					<li id="pMenuInvestTremor"><a href="#">Tremor Readings<span class="badge pull-right" id="pMenuInvestTremorBadge"></span></a></li>
 				</ul>
               </li>							  
               <li id="pMenuMedications"><a href="#">Medications<span class="badge pull-right" id="pMenuMedicationsBadge"></span></a></li>
@@ -415,6 +501,48 @@
 							</div>
 						</div>					
 					</div>
+					<div class="panel-body" id="investTremorPnl" style="display: none">
+						<div class="panel panel-info">
+							<div class="panel-heading">Tremors</div>
+							<div id="TremorTableRow">
+								<div class="scroll-x">
+									<div class="table-responsive">
+										<table class="table display" id="tremorsTable">
+										</table>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div id="mainContent" style="display: none">
+								<!-- tremor recording page content goes here -->
+
+									<div id="warnRecord" class="col-md-12 collapse">
+										<div class="well" id="countdownBox">Recording will begin 3 seconds after clicking the Start button</div>
+										<br>
+									</div>
+
+									<div class="col-md-12 collapse" id="graphContainer">
+									<!-- <b id="graphHeader">Recorded Data</b> -->
+									<!-- flot container -->
+										<div class="demo-container">
+										  <div id="placeholder" class="leapGraph"></div>
+										</div>
+									</div>
+
+								  <div class="col-md-12 collapse">
+									<textarea id="stream" rows=20 cols=80></textarea>
+								  </div>
+								</div>							
+							</div>
+							<div class="panel-footer">
+								<div class="btn btn-success in" id="addTremorBtn">Add Tremor Reading</div>
+								<div class="btn btn-success collapse" id="startBtn">Start Reading</div>
+								<div class="btn btn-danger collapse" id="stopBtn">Stop Reading</div>
+								<div class="btn btn-info collapse" id="saveBtn">Save Reading</div>
+								<div class="btn btn-danger collapse" id="discardBtn">Discard Reading</div>
+							</div>
+						</div>
+					</div>
 					<div class="panel-body" id="allergiesPnl" style="display: none">
 						<div class="panel panel-info">
 							<div class="panel-heading">Allergies</div>
@@ -423,7 +551,7 @@
 									<table class="table display" id="allergyTable">
 									</table>
 								</div>
-						</div>					
+							</div>					
 							<div class="panel-footer">
 								<button href="#" id="newAllergyBtn" class="btn btn-primary">Add new Allergy</button>
 							</div>
@@ -475,16 +603,25 @@
     <script type="text/javascript" src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/select2/3.4.5/select2.js"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/js/toastr.min.js"></script>
+    <script src="/ewdLite/EWD.js"></script>
+    <script type="text/javascript" src="/ewdLite/ewdBootstrap3.js"></script>  
+    <script type="text/javascript" src="app.js"></script>
+	<script type="text/javascript" charset="utf8" src="//ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js"></script>
 
-    <script src="/ewdjs/EWD.js"></script>
-	<script type="text/javascript" src="/dataTables/jquery.dataTables.js"></script>
 	<script type="text/javascript" src="/flot/jquery.flot.js"></script>
 	<script type="text/javascript" src="/flot/jquery.flot.time.js"></script>
 	<script type="text/javascript" src="/flot/jumflot-min.js"></script>
 	<script type="text/javascript" src="/flot/jquery.flot.categories.js"></script>
 	<script type="text/javascript" src="/flot/jquery.flot.selection.js"></script>
 	<script type="text/javascript" src="/flot/jquery.flot.resize.js"></script>
-    <script type="text/javascript" src="/ewd/VistaRCP/app.js?v=0.12"></script>
+	
+	<script src="//js.leapmotion.com/leap-0.6.0.js"></script>
+ 	<script type="text/javascript" src="/Tremor/Tremors.js"></script>
+   <script type="text/javascript" src="/Tremor/complex_array.js"></script>
+    <script type="text/javascript" src="/Tremor/fft.js"></script>
+    <script type="text/javascript" src="/Tremor/fft_image.js"></script>
+    <script type="text/javascript" src="/Tremor/ampAndFreq.js"></script>
+
 
     <!--  =======================================  -->
   </body>

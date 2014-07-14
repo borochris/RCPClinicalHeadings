@@ -545,6 +545,29 @@ module.exports = {
 		//var results=document.outputs.results;
 		return document.outputs.results;
 	},
+	addTremorSet: function(inputs,ewd) {
+		var tremorSet = new ewd.mumps.GlobalNode("%zewdTemp",[process.pid]);
+		tremorSet._delete();
+		tremorSet._setDocument({'inputs': inputs});
+		var result=ewd.mumps.function('wrapAddTremorSet^KBBXHTR0','xx');
+		if (result!='') {
+			ewd.sendWebSocketMsg({
+				type: 'addTremorSet',
+				message: result
+			});
+		};
+		//return result;
+		var document=tremorSet._getDocument();
+		tremorSet._delete();
+		ewd.sendWebSocketMsg({
+			type: 'addTremorSet',
+			message: document.outputs.results
+		});
+		this.listTremors(inputs.patientId,ewd) ; //refresh tremor count and list
+
+		//return document.outputs.results;
+		},
+
 	convertFtoStringDate: function(x) {var x=x.toString(); x=x.slice(5,7)+'/'+x.slice(3,5)+'/'+(parseInt(x.slice(0,3))+1700); return x}
 	
 };
